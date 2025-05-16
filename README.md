@@ -59,11 +59,11 @@ Using the recent traffic mix to calculate the optimal mix of instances to handle
 llm-d's deployer can be used to that installed it as a solution using a single Helm chart on Kubernetes.
 
 > [!TIP]
-> See the guided expericience with our [quickstart](https://github.com/neuralmagic/llm-d-deployer/blob/main/quickstart/README.md).
+> See the guided experience with our [quickstart](https://github.com/neuralmagic/llm-d-deployer/blob/main/quickstart/README.md).
 
 ### Experimenting and developing with llm-d
 
-llm-d is repo is a metaproject with subcomponents can that can be cloned indvidually. 
+llm-d is repo is a metaproject with subcomponents can that can be cloned individually.
 
 To clone all the components:
 ```
@@ -71,7 +71,7 @@ To clone all the components:
 ``` 
 
 > [!TIP]
-> As a customizatoin example, see [here]() a template for adding a scheduler scorer.
+> As a customization example, see [here]() a template for adding a scheduler scorer.
 
 ## 📦 Releases
 
@@ -90,4 +90,4 @@ Visit our [GitHub Releases page](https://github.com/llm-d/llm-d-deployer/release
 
 ## License
 
-This project is licensed under Apache License 2.0. See the LICENSE file for details.
+This project is licensed under Apache License 2.0. See the [LICENSE file](LICENSE) for details.
