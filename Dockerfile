@@ -200,7 +200,7 @@ RUN . .vllm/bin/activate && \
     uv pip install --upgrade pip && \
     uv pip install torch==2.7.0
 
-# Install vllm editable:
+# Install vllm editable
 RUN . .vllm/bin/activate && \
     VLLM_COMMIT=$(git merge-base HEAD origin/main) \
     VLLM_PRECOMPILED_WHEEL_LOCATION=https://wheels.vllm.ai/${VLLM_COMMIT}/vllm-1.0.0.dev-cp38-abi3-manylinux1_x86_64.whl \
