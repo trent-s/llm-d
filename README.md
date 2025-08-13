@@ -24,11 +24,15 @@ llm-d is a Kubernetes-native distributed inference serving stack, providing well
 
 Our [well-lit paths](https://github.com/llm-d-incubation/llm-d-infra/tree/main/quickstart/examples) provide tested and benchmarked recipes and Helm charts to start serving quickly with best practices common to production deployments. They are extensible and customizable for particulars of your models and use cases, using popular open source components like Kubernetes, Envoy proxy, NIXL, and vLLM. Our intent is to eliminate the heavy lifting common in deploying inference at scale so users can focus on building.
 
-We currently offer three tested and benchmarked paths to help deploying large models:
+We currently offer tested and benchmarked paths to help deploying large models:
 
 1. [Intelligent Inference Scheduling](https://github.com/llm-d-incubation/llm-d-infra/tree/main/quickstart/examples/inference-scheduling) - Deploy [vLLM](https://docs.vllm.ai) behind the [Inference Gateway (IGW)](https://github.com/kubernetes-sigs/gateway-api-inference-extension) to decrease latency and increase throughput via [precise prefix-cache aware routing](https://github.com/llm-d-incubation/llm-d-infra/tree/main/quickstart/examples/precise-prefix-cache-aware) and [customizable scheduling policies](https://github.com/llm-d/llm-d-inference-scheduler/blob/main/docs/architecture.md).
 2. [Prefill/Decode Disaggregation](https://github.com/llm-d-incubation/llm-d-infra/tree/main/quickstart/examples/pd-disaggregation) - Reduce time to first token (TTFT) and get more predictable time per output token (TPOT) by splitting inference into prefill servers handling prompts and decode servers handling responses, primarily on large models such as Llama-70B and when processing very long prompts.
 3. [Wide Expert-Parallelism](https://github.com/llm-d-incubation/llm-d-infra/tree/main/quickstart/examples/wide-ep-lws) - Deploy very large Mixture-of-Experts (MoE) models like [DeepSeek-R1](https://github.com/vllm-project/vllm/issues/16037) and significantly reduce end-to-end latency and increase throughput by scaling up with [Data Parallelism and Expert Parallelism](https://docs.vllm.ai/en/latest/serving/data_parallel_deployment.html) over fast accelerator networks.
+4. [Intel XPU Inference](https://github.com/llm-d-incubation/llm-d-infra/tree/main/quickstart/examples/intel-xpu) - Deploy models on Intel Data Center GPU Max (XPU) hardware with Intel GPU-specific optimizations.
+
+### Hardware Support
+llm-d supports multiple accelerator types including NVIDIA GPUs, AMD GPUs, Google TPUs, and Intel XPUs, providing a unified interface for multi-vendor deployments.
 
 See the path descriptions for more details about the accelerators, networks, and configurations tested and our [roadmap](https://github.com/llm-d/llm-d/issues/146) for what is coming next.
 
@@ -43,6 +47,7 @@ See the path descriptions for more details about the accelerators, networks, and
   * NVIDIA H100 or newer for larger models and L4, A100 for smaller models
   * AMD MI250 or newer
   * Google TPU v5e, v6e, and newer
+  * Intel Data Center GPU Max (XPU/Ponte Vecchio) series
 * With extremely fast accelerator interconnect and datacenter networking
   * 600-16,000 Gbps per accelerator NVLINK on host or across narrow domains like NVL72
   * 1,600-5,000 Gbps per chip TPU OCS links within TPU pods
