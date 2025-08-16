@@ -47,21 +47,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Load version from .version.json
-        id: version
-        run: |
-          DEV_VERSION=$(jq -r '."dev-version"' .version.json)
-          DEV_REGISTRY=$(jq -r '."dev-registry"' .version.json)
-          echo "dev_version=$DEV_VERSION" >> $GITHUB_OUTPUT
-          echo "dev_registry=$DEV_REGISTRY" >> $GITHUB_OUTPUT
-          echo "Loaded version: $DEV_VERSION"
-          echo "Loaded registry: $DEV_REGISTRY"
+      # Use on PR and sha images for every pull request or push to main. For release use the .version.json
+      # - name: Load version from .version.json
+      #   id: version
+      #   run: |
+      #     DEV_VERSION=$(jq -r '."dev-version"' .version.json)
+      #     DEV_REGISTRY=$(jq -r '."dev-registry"' .version.json)
+      #     echo "dev_version=$DEV_VERSION" >> $GITHUB_OUTPUT
+      #     echo "dev_registry=$DEV_REGISTRY" >> $GITHUB_OUTPUT
+      #     echo "Loaded version: $DEV_VERSION"
+      #     echo "Loaded registry: $DEV_REGISTRY"
 
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-dev
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -86,7 +87,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository }}-dev@${{ steps.build-and-push.outputs.digest }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH,MEDIUM'
