@@ -1,4 +1,4 @@
-name: Build LLM-D Image
+name: Dev LLM-D Image Build
 
 on:
   push:
@@ -21,6 +21,7 @@ on:
 permissions:
   contents: read
   packages: write
+  security-events: write
 
 env:
   REGISTRY: ghcr.io
@@ -46,17 +47,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
-
-      # Use on PR and sha images for every pull request or push to main. For release use the .version.json
-      # - name: Load version from .version.json
-      #   id: version
-      #   run: |
-      #     DEV_VERSION=$(jq -r '."dev-version"' .version.json)
-      #     DEV_REGISTRY=$(jq -r '."dev-registry"' .version.json)
-      #     echo "dev_version=$DEV_VERSION" >> $GITHUB_OUTPUT
-      #     echo "dev_registry=$DEV_REGISTRY" >> $GITHUB_OUTPUT
-      #     echo "Loaded version: $DEV_VERSION"
-      #     echo "Loaded registry: $DEV_REGISTRY"
 
       - name: Extract metadata
         id: meta
