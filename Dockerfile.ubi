@@ -367,8 +367,8 @@ RUN --mount=type=cache,target=/var/cache/git \
         VLLM_PRECOMPILED_WHEEL_LOCATION="https://wheels.vllm.ai/${VLLM_COMMIT}/vllm-1.0.0.dev-cp38-abi3-manylinux1_${VLLM_WHEEL_ARCH}.whl"; \
         VLLM_USE_PRECOMPILED=1 uv pip install --editable .; \
     fi; \
-    rm -rf /tmp/wheels /tmp/vllm-${VLLM_COMMIT_SHA} && \
-    uv pip install "nvidia-nccl-cu12>=2.26.2.post1"
+    uv pip install "nvidia-nccl-cu12>=2.26.2.post1" && \
+    rm -rf /tmp/wheels /tmp/vllm-${VLLM_COMMIT_SHA}
 
 
 RUN dnf remove -y git && dnf autoremove -y && dnf clean all
