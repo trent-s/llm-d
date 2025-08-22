@@ -349,6 +349,7 @@ ARG VLLM_WHEEL_URL="https://gitlab.com/api/v4/projects/72482892/packages/pypi/si
 RUN --mount=type=cache,target=/var/cache/git \
     source /opt/vllm/bin/activate && \
     uv pip install cuda-python 'huggingface_hub[hf_xet]' && \
+    uv pip install torch==2.7.1 && \
     uv pip install /tmp/wheels/*.whl && \
     git clone https://github.com/vllm-project/vllm.git /opt/vllm-source && \
     cd /opt/vllm-source && \
