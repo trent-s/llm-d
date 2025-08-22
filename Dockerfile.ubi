@@ -373,7 +373,7 @@ RUN --mount=type=cache,target=/var/cache/git \
     # leaving vllm source arround at path /opt/vllm-source for editable install for debugging purposes
 
 
-RUN dnf remove -y git && dnf autoremove -y && dnf clean all
+RUN dnf autoremove -y && dnf clean all
 
 # setup non-root user for OpenShift
 RUN umask 002 && \
