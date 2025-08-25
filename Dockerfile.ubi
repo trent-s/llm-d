@@ -238,6 +238,9 @@ ARG PPLX_KERNELS_URL="https://github.com/ppl-ai/pplx-kernels"
 # Create wheels directory
 RUN mkdir -p /wheels
 
+# Pin to a good release for flashinfer to get around license build issues
+ARG FLASHINFER_REF=v0.2.14.post1
+
 # Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
     source ${VIRTUAL_ENV}/bin/activate && \
@@ -249,9 +252,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     cd /tmp && \
     # Remove if already installed to prevent versioning issues
     uv pip uninstall flashinfer-python || true && \
-    git clone https://github.com/flashinfer-ai/flashinfer.git && \
+    git clone --depth 1 --branch "${FLASHINFER_REF}" --recursive https://github.com/flashinfer-ai/flashinfer.git && \
     cd flashinfer && \
-    uv pip install -e . --no-build-isolation && \
+    uv pip install -e . --no-build-isolation --no-deps && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
     cd .. && rm -rf flashinfer && \
     \
