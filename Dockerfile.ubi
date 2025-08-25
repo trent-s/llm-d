@@ -239,7 +239,7 @@ ARG PPLX_KERNELS_URL="https://github.com/ppl-ai/pplx-kernels"
 RUN mkdir -p /wheels
 
 # Pin to a good release for flashinfer to get around license build issues
-ARG FLASHINFER_REF=v0.2.14.post1
+ARG FLASHINFER_REF=v0.2.14
 
 # Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
