@@ -27,7 +27,7 @@ EOF
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     UV_LINK_MODE=copy \
-    TORCH_CUDA_ARCH_LIST="9.0a;10.0+PTX" \
+    TORCH_CUDA_ARCH_LIST="9.0a;10.0;12.0+PTX" \
     PYTHON_VERSION=${PYTHON_VERSION:-3.12} \
     # UV_TORCH_BACKEND=${UV_TORCH_BACKEND:-cu${CUDA_MAJOR}${CUDA_MINOR}} \
     # explicitly use cu128 because no torch 2.7.1 with cu129
