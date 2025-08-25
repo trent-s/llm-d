@@ -242,8 +242,8 @@ RUN mkdir -p /wheels
 RUN --mount=type=cache,target=/root/.cache/uv \
     source ${VIRTUAL_ENV}/bin/activate && \
     \
-    # Install build tools
-    uv pip install build cuda-python numpy setuptools-scm ninja && \
+    # Install build tools (pin cuda-python to 12.9 for flashinfer requirements)
+    uv pip install build "cuda-python<=12.9" numpy setuptools-scm ninja && \
     \
     # Build FlashInfer wheel
     cd /tmp && \
