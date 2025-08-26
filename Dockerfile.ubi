@@ -244,6 +244,14 @@ ARG FLASHINFER_REF=main
 # Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
     source ${VIRTUAL_ENV}/bin/activate && \
+    cat >/tmp/xpu_shim.cmake <<'EOF'
+if (NOT TARGET torch::xpurt)
+  add_library(torch_xpu_stub INTERFACE)
+  add_library(torch::xpurt ALIAS torch_xpu_stub)
+endif()
+EOF && \
+    # Ensure every CMake configure in this shell picks up the shim
+    export CMAKE_PROJECT_INCLUDE_BEFORE=/tmp/xpu_shim.cmake && \
     \
     # Install build tools (pin cuda-python to 12.9 for flashinfer requirements)
     uv pip install "cuda-python<=${CUDA_MAJOR}.${CUDA_MINOR}" && \
