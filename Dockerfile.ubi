@@ -254,15 +254,16 @@ EOF
 ENV CMAKE_PROJECT_INCLUDE_BEFORE=/opt/cmake-shims/xpu_shim.cmake \
     CMAKE_PROJECT_TOP_LEVEL_INCLUDES=/opt/cmake-shims/xpu_shim.cmake
 
-# Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
     source ${VIRTUAL_ENV}/bin/activate && \
     # Install build tools (pin cuda-python to 12.9 for flashinfer requirements)
     uv pip install "cuda-python<=${CUDA_MAJOR}.${CUDA_MINOR}" && \
     uv pip install -U "setuptools>=77" "packaging>=24.2" "wheel>=0.44" --index-url https://pypi.org/simple --index-strategy unsafe-best-match && \
-    uv pip install -U build numpy setuptools-scm ninja && \
-    \
-    # Build FlashInfer wheel
+    uv pip install -U build numpy setuptools-scm ninja
+
+# BuildFlash infer
+RUN --mount=type=cache,target=/root/.cache/uv \
+    source ${VIRTUAL_ENV}/bin/activate && \
     cd /tmp && \
     # Remove if already installed to prevent versioning issues
     uv pip uninstall flashinfer-python || true && \
@@ -270,28 +271,37 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     cd flashinfer && \
     uv pip install -e . --no-build-isolation --no-deps && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
-    cd .. && rm -rf flashinfer && \
-    \
-    # Build DeepEP wheel
+    cd .. && rm -rf flashinfer
+
+# build DeepEP
+RUN --mount=type=cache,target=/root/.cache/uv \
+    source ${VIRTUAL_ENV}/bin/activate && \
+    cd /tmp && \
     git clone "${DEEPEP_URL}" deepep && \
     cd deepep && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
-    cd .. && rm -rf deepep && \
-    \
-    # Build DeepGEMM wheel
+    cd .. && rm -rf deepep
+
+# Build DeepGEMM
+RUN --mount=type=cache,target=/root/.cache/uv \
+    source ${VIRTUAL_ENV}/bin/activate && \
+    cd /tmp && \
     git clone "${DEEPGEMM_URL}" deepgemm && \
     cd deepgemm && \
     # git checkout multi_arch_support && \
     git submodule update --init --recursive && \
     uv build --wheel --no-build-isolation --out-dir /wheels && \
-    cd .. && rm -rf deepgemm && \
-    \
-    # Build pplx-kernels wheel
+    cd .. && rm -rf deepgemm
+
+# Build PPLX
+RUN --mount=type=cache,target=/root/.cache/uv \
+    source ${VIRTUAL_ENV}/bin/activate && \
+    cd /tmp && \
     git clone ${PPLX_KERNELS_URL} pplx-kernels && \
     cd pplx-kernels && \
-    # git checkout build-fixes && \
     NVSHMEM_PREFIX=${NVSHMEM_DIR} uv build --wheel --out-dir /wheels && \
     cd .. && rm -rf pplx-kernels
+
 
 # ============================================================================
 # RUNTIME STAGE - Minimal runtime image
