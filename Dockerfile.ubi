@@ -26,7 +26,7 @@ EOF
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     UV_LINK_MODE=copy \
-    TORCH_CUDA_ARCH_LIST="9.0a;10.0+PTX" \
+    TORCH_CUDA_ARCH_LIST="8.0;8.6;9.0a;10.0+PTX" \
     PYTHON_VERSION=${PYTHON_VERSION:-3.12} \
     UV_TORCH_BACKEND=${UV_TORCH_BACKEND:-cu${CUDA_MAJOR}${CUDA_MINOR}} \
     UV_BUILD_CONSTRAINT=/tmp/build-constraints.txt \
@@ -142,7 +142,7 @@ RUN cd /tmp && \
         cmake \
         -G Ninja \
         -DNVSHMEM_PREFIX=${NVSHMEM_DIR} \
-        -DCMAKE_CUDA_ARCHITECTURES="90a;100" \
+        -DCMAKE_CUDA_ARCHITECTURES="89;90a;100" \
         -DNVSHMEM_PMIX_SUPPORT=0 \
         -DNVSHMEM_LIBFABRIC_SUPPORT=0 \
         -DNVSHMEM_IBRC_SUPPORT=1 \
@@ -299,7 +299,8 @@ ENV LANG=C.UTF-8 \
     NVSHMEM_DIR="/opt/nvshmem-${NVSHMEM_VERSION}" \
     LD_LIBRARY_PATH="/opt/vllm/lib64/python${PYTHON_VERSION}/site-packages/torch/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/lib:/usr/local/lib64:/opt/nvshmem-${NVSHMEM_VERSION}/lib:${LD_LIBRARY_PATH}" \
     PATH="/opt/nvshmem-${NVSHMEM_VERSION}/bin:${PATH}" \
-    CPATH="/opt/nvshmem-${NVSHMEM_VERSION}/include:${CPATH}"
+    CPATH="/opt/nvshmem-${NVSHMEM_VERSION}/include:${CPATH}" \
+    TORCH_CUDA_ARCH_LIST="8.0;8.6;9.0a;10.0+PTX"
 
 # Update base packages
 RUN dnf update -y && dnf clean all
