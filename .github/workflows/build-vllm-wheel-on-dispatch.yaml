@@ -6,18 +6,28 @@ on:
       VLLM_COMMIT:
         description: 'vLLM commit hash to build'
         required: true
+      VARIANT:
+        description: 'Which hardware type to target'
+        required: true
+        type: choice
+        options: ["cuda", "rocm", "tpu"]
       PYTHON_VERSION:
         description: "Python version"
         required: false
         default: "3.12"
         type: choice
         options: ["3.9", "3.10", "3.11", "3.12"]
+      # HARDWARE SPECIFIC VARS
       CUDA_VERSION:
         description: "CUDA toolkit version"
         required: false
         default: "12.8"
         type: choice
         options: ["11.8", "12.6", "12.8"]
+      TPU_TORCH_NIGHTLY_BUILD_DATE:
+        description: "The Nightly build date for torch, torch_xla and torchvision if building for TPU"
+        required: false
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}
@@ -25,8 +35,6 @@ concurrency:
 
 env:
   TF_VAR_aws_region: "us-west-2"
-  TF_VAR_aws_ami_name: '["*ubuntu-noble-24.04*"]'
-  TF_VAR_aws_ami_owners: '["099720109477"]'
   TF_VAR_aws_volume_size: 300
   TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
   TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -35,7 +43,10 @@ env:
 
 jobs:
   build-vllm-cuda:
-    if: github.event_name == 'workflow_dispatch'
+    env:
+      TF_VAR_aws_ami_name: '["*ubuntu-noble-24.04*"]'
+      TF_VAR_aws_ami_owners: '["099720109477"]'
+    if: github.event_name == 'workflow_dispatch' && inputs.VARIANT == 'cuda'
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -121,3 +132,72 @@ jobs:
         env:
           TF_VAR_aws_instance_type: ${{ matrix.AWS_IMAGE_TYPE }}
           TF_VAR_aws_ami_architecture: ${{ matrix.AWS_AMI_ARCHITECTURE }}
+
+  build-vllm-tpu:
+    env:
+      TF_VAR_aws_ami_name: '["*debian-12-amd64*"]'
+      TF_VAR_aws_ami_owners: '["679593333241"]'
+    if: github.event_name == 'workflow_dispatch' && inputs.VARIANT == 'tpu'
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - ARCH: amd64
+            AWS_AMI_ARCHITECTURE: x86_64
+            AWS_IMAGE_TYPE: c6i.8xlarge
+            MAX_JOBS: 28
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+        with:
+          path: main
+
+      - name: Checkout terraform module
+        id: checkout-module
+        uses: actions/checkout@v4.1.7
+        with:
+          repository: containers/terraform-test-environment-module
+          path: terraform-test-environment-module
+          ref: 'main'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3.1.2
+        with:
+          terraform_version: "1.7.5"
+          terraform_wrapper: false
+
+      - name: Init
+        run: terraform init
+        working-directory: terraform-test-environment-module
+
+      - name: Bootstrap
+        id: up
+        run: terraform apply -auto-approve -lock=false
+        working-directory: terraform-test-environment-module
+        env:
+          TF_VAR_aws_instance_type: ${{ matrix.AWS_IMAGE_TYPE }}
+          TF_VAR_aws_ami_architecture: ${{ matrix.AWS_AMI_ARCHITECTURE }}
+
+      - name: Terraform Output
+        id: terraform-output
+        run: |
+          echo "id=$(terraform output id | xargs)" >> $GITHUB_OUTPUT
+          echo "url=$(terraform output host | xargs)" >> $GITHUB_OUTPUT
+          echo "ssh_public_key=$(terraform output ssh_public_key | xargs)" >> $GITHUB_OUTPUT
+          echo "pem_filename=$(terraform output pem_filename | xargs)" >> $GITHUB_OUTPUT
+        working-directory: terraform-test-environment-module
+
+      - name: Provision
+        id: provision
+        timeout-minutes: 180
+        run: |
+          ansible-playbook ./main/.github/workflows/playbooks/build-vllm-tpu.yml \
+            -i terraform-test-environment-module/hosts.ini \
+            --private-key=terraform-test-environment-module/${{ steps.terraform-output.outputs.pem_filename }} \
+            --extra-vars "VLLM_COMMIT='${{ inputs.VLLM_COMMIT }}'" \
+            --extra-vars "PYTHON_VERSION='${{ inputs.PYTHON_VERSION }}'" \
+            --extra-vars "PYPIRC_USER='${{ secrets.LLMD_GITLAB_USER }}'" \
+            --extra-vars "PYPIRC_TOKEN='${{ secrets.LLMD_GITLAB_PAT }}'" \
+            --extra-vars "TPU_TORCH_NIGHTLY_BUILD_DATE='${{ inputs.TPU_TORCH_NIGHTLY_BUILD_DATE}}'"

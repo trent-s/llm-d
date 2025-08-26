@@ -1,0 +1,89 @@
+- name: Build vLLM from source for Google TPUs
+  hosts: test_environments
+  remote_user: admin
+  become: true
+  gather_facts: false
+
+  tasks:
+
+    - name: Wait until the instance is ready
+      ansible.builtin.wait_for_connection:
+        delay: 15
+        timeout: 180
+
+    - name: Install Python, GCC 10, AWS CLI, and dev Deps
+      shell: |
+        export DEBIAN_FRONTEND=noninteractive
+        ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
+        apt-get update
+        apt-get install -y tzdata && \
+        dpkg-reconfigure -f noninteractive tzdata && \
+        # install python 3.11
+        echo 'deb http://deb.debian.org/debian bookworm-backports main' | tee /etc/apt/sources.list.d/backports.list
+        apt update
+        apt -t bookworm-backports install -y python3 python3-venv python3-dev
+        apt-get install -y git cmake ninja-build vim tree curl unzip ffmpeg libsm6 libxext6 libgl1 curl jq          
+        rm -rf /var/lib/apt/lists/*
+      args:
+        executable: /bin/bash
+        chdir: /home/admin
+
+    - name: Gather facts for first time (After python upgrade)
+      ansible.builtin.setup:
+
+    # Don't need Sccache for TPU builds because there are minimal to no compiler invocations (C/C++/Rust; nvcc/clang/gcc, etc.)
+
+    - name: Clone vLLM repo (bash)
+      ansible.builtin.shell: |
+        set -euo pipefail
+        REPO="https://github.com/vllm-project/vllm.git"
+        DEST="/home/admin/vllm"
+        COMMIT="{{ VLLM_COMMIT }}"
+        git clone "$REPO" "$DEST"
+        # Ensure we can checkout branch/tag/SHA deterministically
+        git -C "$DEST" fetch --tags --force --prune
+        git -C "$DEST" checkout --force "$COMMIT"
+        git -C "$DEST" submodule update --init --recursive
+      args:
+        executable: /bin/bash
+
+    - name: Install tpu nightly helper patch script
+      copy:
+        dest: /usr/local/bin/tpu_nightly.py
+        mode: "0755"
+        content: "{{ lookup('file', '../../tools/tpu_nightly.py') }}"
+
+    - name: Create venv and run script
+      ansible.builtin.shell: |
+        if [ -n "{{ TPU_TORCH_NIGHTLY_BUILD_DATE | default('') }}" ]; then
+          SET_FLAG="--set-date {{ TPU_TORCH_NIGHTLY_BUILD_DATE }}"
+        fi
+        python3 -m venv /home/admin/vllm/venv
+        /usr/local/bin/tpu_nightly.py \
+          ${SET_FLAG} \
+          --file /home/admin/vllm/requirements/tpu.txt \
+          --set-json /home/admin/vllm/nightly_date.json
+
+    - name: Create virtualenv and install deps
+      ansible.builtin.shell: |
+        set -euo pipefail
+        source /home/admin/vllm/venv/bin/activate
+        pip install -r /home/admin/vllm/requirements/build.txt
+        pip install -r /home/admin/vllm/requirements/tpu.txt
+      args:
+        executable: /bin/bash
+        chdir: /home/admin
+
+    - name: Start Wheel Build
+      shell: |
+        export VLLM_TARGET_DEVICE="tpu"
+        MOST_RECENT_TAG=0.0.0 # set tag as 0 so wheel is unique to only the commit sha and not release timeline
+        COMMIT_SHA_TAG="g$(git rev-parse --short HEAD)"
+        DATE=$(cat /home/admin/vllm/nightly_date.json | jq .nightly_date)
+        export SETUPTOOLS_SCM_PRETEND_VERSION="${MOST_RECENT_TAG}+${COMMIT_SHA_TAG}.${DATE}"
+
+        python setup.py bdist_wheel --dist-dir=dist > /tmp/vllm-build.log 2>&1
+        # try python -m build --wheel -o dist
+      args:
+        executable: /bin/bash
+        chdir: /home/admin
