@@ -318,9 +318,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     NVSHMEM_PREFIX=${NVSHMEM_DIR} uv build --wheel --out-dir /wheels && \
     cd .. && rm -rf pplx-kernels
 
-# Throw away stage, simply verify builds are hitting the cache
-FROM builder AS sccache-stats
-RUN sccache --show-stats || true
+# verify builds are hitting the cache
+RUN sccache --show-stats
 
 # ============================================================================
 # RUNTIME STAGE - Minimal runtime image
