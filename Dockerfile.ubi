@@ -53,7 +53,9 @@ RUN --mount=type=secret,id=aws_access_key_id \
         export SCCACHE_IDLE_TIMEOUT=0 && \
         export SCCACHE_LOG=debug && \
         export RUSTC_WRAPPER="sccache" && \
-        /usr/local/bin/sccache --start-server; \
+        /usr/local/bin/sccache --start-server && \
+        # verify sccache is working with the s3 backend
+        /usr/local/bin/sccache --show-stats; \
     fi
 
 WORKDIR /workspace
