@@ -245,6 +245,7 @@ ARG FLASHINFER_REF=main
 # basically this version of torch exports XPU (Intel) targets in its Caffe2Targets.cmake, so when pplx-kernels runs find_package(Torch), CMake tries to link against a target named torch::xpurt that isn’t present in the CUDA wheel—then dies
 RUN mkdir -p /opt/cmake-shims && \
     cat > /opt/cmake-shims/xpu_shim.cmake <<'EOF'
+message(STATUS "XPU shim active: defining torch::xpurt stub")
 if (NOT TARGET torch::xpurt)
   add_library(torch_xpu_stub INTERFACE)
   add_library(torch::xpurt ALIAS torch_xpu_stub)
@@ -258,7 +259,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     source ${VIRTUAL_ENV}/bin/activate && \
     # Install build tools (pin cuda-python to 12.9 for flashinfer requirements)
     uv pip install "cuda-python<=${CUDA_MAJOR}.${CUDA_MINOR}" && \
-    uv pip install -U "setuptools>=77" "packaging>=24.2" "wheel>=0.44" --index-url https://pypi.org/simple --index-strategy unsafe-best-match && \
+    uv pip install -U "setuptools>=77" "packaging>=24.2" "wheel>=0.44" "cmake>=3.27" --index-url https://pypi.org/simple --index-strategy unsafe-best-match && \
     uv pip install -U build numpy setuptools-scm ninja
 
 # BuildFlash infer
@@ -299,7 +300,11 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     cd /tmp && \
     git clone ${PPLX_KERNELS_URL} pplx-kernels && \
     cd pplx-kernels && \
-    NVSHMEM_PREFIX=${NVSHMEM_DIR} uv build --wheel --out-dir /wheels && \
+    CMAKE_ARGS="-DCMAKE_PROJECT_INCLUDE_BEFORE=/opt/cmake-shims/xpu_shim.cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/opt/cmake-shims/xpu_shim.cmake -DTORCH_USE_XPU=OFF -DUSE_XPU=OFF -DATEN_ENABLE_XPU=OFF" \
+    SKBUILD_CMAKE_ARGS="$CMAKE_ARGS" \
+    NVSHMEM_PREFIX="${NVSHMEM_DIR}" \
+    uv build --wheel --out-dir /wheels \
+      --config-setting=cmake.args="-DCMAKE_PROJECT_INCLUDE_BEFORE=/opt/cmake-shims/xpu_shim.cmake;-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/opt/cmake-shims/xpu_shim.cmake;-DTORCH_USE_XPU=OFF;-DUSE_XPU=OFF;-DATEN_ENABLE_XPU=OFF" && \
     cd .. && rm -rf pplx-kernels
 
 
