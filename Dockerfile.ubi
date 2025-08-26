@@ -12,6 +12,47 @@ ARG CUDA_MINOR=8
 ARG CUDA_PATCH=1
 ARG PYTHON_VERSION
 
+ARG USE_SCCACHE=true
+
+COPY sccache.config.toml /tmp
+
+RUN --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
+    --mount=type=tmpfs,target=/root/.aws \
+    if [ "${USE_SCCACHE}" = "true" ]; then \
+        set -Eeuo pipefail && \
+        # install rust
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+        . $HOME/.cargo/env && \
+        # install sccache
+        dnf install -y openssl-devel && \
+        cargo install sccache && \
+        mv $HOME/.cargo/bin/sccache /usr/local/bin/sccache && \
+        # sccache configurations
+        mkdir -p $HOME/.config/sccache && \
+        mv /tmp/sccache.config.toml $HOME/.config/sccache/config.toml && \
+        export SCCACHE_CONF=$HOME/.config/sccache/config.toml && \
+        # build out AWS creds and configs
+        umask 077 && \
+        AKI="$(cat /run/secrets/aws_access_key_id)" && \
+        SAK="$(cat /run/secrets/aws_secret_access_key)" && \
+        { \
+        echo "[default]"; \
+        echo "region=us-west-2"; \
+        echo "aws_access_key_id=${AKI}"; \
+        echo "aws_secret_access_key=${SAK}"; \
+        } > /root/.aws/credentials && \
+        { \
+        echo "[default]"; \
+        echo "region=us-west-2"; \
+        echo "output=json"; \
+        } > /root/.aws/config && \
+        export AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials AWS_CONFIG_FILE=/root/.aws/config AWS_DEFAULT_REGION="us-west-2" AWS_PROFILE=default && \
+        export SCCACHE_IDLE_TIMEOUT=0 && \
+        export SCCACHE_LOG=debug && \
+        /usr/local/bin/sccache --start-server; \
+    fi
+
 WORKDIR /workspace
 
 # Create UV constraint files
