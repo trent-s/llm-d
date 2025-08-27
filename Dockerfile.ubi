@@ -208,7 +208,7 @@ WORKDIR /workspace
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=53415653ff24be03e7c90f5b42ef9cb3f72aad71
+ARG VLLM_COMMIT_SHA=a019a90aeda44485cb3cce7d97d5a8c5c99dd7ea
 
 # Define if lmcache should be built 
 # Clone repositories with cache mounts
@@ -354,7 +354,7 @@ COPY --from=builder /wheels/*.whl /tmp/wheels/
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=53415653ff24be03e7c90f5b42ef9cb3f72aad71
+ARG VLLM_COMMIT_SHA=a019a90aeda44485cb3cce7d97d5a8c5c99dd7ea
 
 ARG VLLM_PREBUILT=0
 
@@ -368,7 +368,7 @@ RUN --mount=type=cache,target=/var/cache/git \
     source /opt/vllm/bin/activate && \
     uv pip install cuda-python 'huggingface_hub[hf_xet]' && \
     uv pip install /tmp/wheels/*.whl && \
-    git clone https://github.com/vllm-project/vllm.git /opt/vllm-source && \
+    git clone https://github.com/wseaton/vllm.git /opt/vllm-source && \
     cd /opt/vllm-source && \
     git checkout -q ${VLLM_COMMIT_SHA}; \
     VLLM_WHEEL_ARCH=""; \
@@ -390,7 +390,7 @@ RUN --mount=type=cache,target=/var/cache/git \
     # leaving vllm source arround at path /opt/vllm-source for editable install for debugging purposes
 
 
-RUN dnf remove -y git && dnf autoremove -y && dnf clean all
+RUN dnf autoremove -y && dnf clean all
 
 # setup non-root user for OpenShift
 RUN umask 002 && \
