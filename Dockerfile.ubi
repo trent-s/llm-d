@@ -208,7 +208,7 @@ WORKDIR /workspace
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=a019a90aeda44485cb3cce7d97d5a8c5c99dd7ea
+ARG VLLM_COMMIT_SHA=9f928805f5237b8f0328cd8f5efe18128d5e074a
 
 # Define if lmcache should be built 
 # Clone repositories with cache mounts
@@ -354,7 +354,7 @@ COPY --from=builder /wheels/*.whl /tmp/wheels/
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=a019a90aeda44485cb3cce7d97d5a8c5c99dd7ea
+ARG VLLM_COMMIT_SHA=9f928805f5237b8f0328cd8f5efe18128d5e074a
 
 ARG VLLM_PREBUILT=0
 
