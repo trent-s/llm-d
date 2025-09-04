@@ -2,17 +2,13 @@ name: Dev LLM-D Image Build
 
 on:
   push:
-    branches:
-      - main
-      - dev
+    branches: [ main, dev ]
     paths:
       - .github/workflows/build-image.yml
       - docker/**
       - patches/**
   pull_request:
-    branches:
-      - main
-      - dev
+    branches: [ main, dev ]
     paths:
       - .github/workflows/build-image.yml
       - docker/**
@@ -41,8 +37,8 @@ jobs:
           filters: |
             cuda:
               - 'docker/Dockerfile.cuda'
-              - 'cks_nvshmem3.3.20.patch'
-              - 'cks_nvshmem3.3.9.patch'
+              - 'patches/cks_nvshmem3.3.20.patch'
+              - 'patches/cks_nvshmem3.3.9.patch'
             rocm:
               - 'docker/Dockerfile.rocm'
 
@@ -176,7 +172,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ github.repository }}-cuda-dev@${{ steps.build-and-push.outputs.digest }}
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository }}-rocm-dev@${{ steps.build-and-push.outputs.digest }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH,MEDIUM'
