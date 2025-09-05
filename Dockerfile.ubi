@@ -17,6 +17,13 @@ ARG USE_SCCACHE=true
 RUN cat > /usr/local/bin/setup-sccache << 'EOF'
 #!/bin/bash
 if [ "${USE_SCCACHE}" = "true" ]; then
+    # Set up AWS credentials if secrets are available
+    if [ -f "/run/secrets/aws_access_key_id" ] && [ -f "/run/secrets/aws_secret_access_key" ]; then
+        export AWS_ACCESS_KEY_ID="$(cat /run/secrets/aws_access_key_id)"
+        export AWS_SECRET_ACCESS_KEY="$(cat /run/secrets/aws_secret_access_key)"
+        export AWS_DEFAULT_REGION="us-west-2"
+    fi
+    
     export CMAKE_C_COMPILER_LAUNCHER=sccache
     export CMAKE_CXX_COMPILER_LAUNCHER=sccache  
     export CMAKE_CUDA_COMPILER_LAUNCHER=sccache
@@ -64,9 +71,6 @@ RUN --mount=type=secret,id=aws_access_key_id \
         mv sccache-v0.10.0-x86_64-unknown-linux-musl/sccache /usr/local/bin/sccache && \
         cd /tmp && \
         rm -rf /tmp/sccache && \
-        export AWS_ACCESS_KEY_ID="$(cat /run/secrets/aws_access_key_id)" && \
-        export AWS_SECRET_ACCESS_KEY="$(cat /run/secrets/aws_secret_access_key)" && \
-        export AWS_DEFAULT_REGION="us-west-2" && \
         source /usr/local/bin/setup-sccache && \
         echo "int main() { return 0; }" | sccache gcc -x c - -o /dev/null && \
         echo "sccache installation and S3 connectivity verified"; \
@@ -153,22 +157,32 @@ ENV NVSHMEM_DIR="/opt/nvshmem-${NVSHMEM_VERSION}" \
 # Build and install gdrcopy
 # TODO: CUSTOM LOGGING
 RUN --mount=type=cache,target=/var/cache/git \
+    --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
+    source /usr/local/bin/setup-sccache && \
     git clone https://github.com/NVIDIA/gdrcopy.git && \
     cd gdrcopy && \
-    PREFIX=/usr/local DESTLIB=/usr/local/lib make lib_install && \
+    CC="sccache gcc" CXX="sccache g++" PREFIX=/usr/local DESTLIB=/usr/local/lib make lib_install && \
     cp src/libgdrapi.so.2.* /usr/lib64/ && \
     ldconfig && \
-    cd .. && rm -rf gdrcopy
+    cd .. && rm -rf gdrcopy && \
+    if [ "${USE_SCCACHE}" = "true" ]; then \
+        echo "=== gdrcopy build complete - sccache stats ===" && \
+        sccache --show-stats; \
+    fi
 
 # Build and install UCX
 # TODO: CUSTOM LOGGING
 ARG UCX_VERSION="v1.19.0-rc1"
 RUN --mount=type=cache,target=/var/cache/git \
+    --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
+    source /usr/local/bin/setup-sccache && \
     git clone https://github.com/openucx/ucx.git && \
     cd ucx && \
     git checkout ${UCX_VERSION} && \
     ./autogen.sh && \
-    ./contrib/configure-release \
+    CC="sccache gcc" CXX="sccache g++" ./contrib/configure-release \
         --enable-shared \
         --disable-static \
         --disable-doxygen-doc \
@@ -197,7 +211,9 @@ ENV CPPFLAGS="-I$NVSHMEM_DIR/include ${CPPFLAGS}" \
 COPY patches/ /tmp/patches/
 
 # Build and install NVSHMEM from source with coreweave patch
-RUN cd /tmp && \
+RUN --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
+    cd /tmp && \
     source /usr/local/bin/setup-sccache && \
     wget https://developer.download.nvidia.com/compute/redist/nvshmem/${NVSHMEM_VERSION}/source/nvshmem_src_cuda12-all-all-${NVSHMEM_VERSION}.tar.gz -O nvshmem_src_cuda${CUDA_MAJOR}.tar.gz && \
     tar -xf nvshmem_src_cuda${CUDA_MAJOR}.tar.gz && \
@@ -250,6 +266,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 ARG NIXL_REPO_URL="https://github.com/ai-dynamo/nixl.git"
 ARG NIXL_COMMIT_SHA="ba7e40760027796890ad17e95620526c3c5560ee"
 RUN --mount=type=cache,target=/tmp/nixl-cache \
+    --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib64/ && \
     mkdir /opt/nixl && cd /opt/nixl && \
     git clone ${NIXL_REPO_URL} . && \
@@ -311,6 +329,8 @@ RUN mkdir -p /wheels
 
 # Build compiled packages as wheels (only ones that need build tools)
 RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
     source ${VIRTUAL_ENV}/bin/activate && \
     source /usr/local/bin/setup-sccache && \
     \
@@ -355,6 +375,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Build vLLM wheel
 RUN --mount=type=cache,target=/var/cache/git \
     --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=secret,id=aws_access_key_id \
+    --mount=type=secret,id=aws_secret_access_key \
     source ${VIRTUAL_ENV}/bin/activate && \
     source /usr/local/bin/setup-sccache && \
     git clone https://github.com/wseaton/vllm.git /opt/vllm-source && \
