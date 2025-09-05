@@ -366,12 +366,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     fi
 
 
-RUN if [ "${USE_SCCACHE}" = "true" ]; then \
-        echo "Final sccache statistics:" && \
-        sccache --show-stats && \
-        sccache --stop-server; \
-    fi
-
 # ============================================================================
 # RUNTIME STAGE - Minimal runtime image
 # ============================================================================
