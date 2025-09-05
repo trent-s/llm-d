@@ -47,7 +47,7 @@ if [ "${USE_SCCACHE}" = "true" ]; then
         return 1
     fi
     
-    echo "sccache successfully configured with cache prefix: ${CACHE_PREFIX}"
+    echo "sccache successfully configured with cache prefix: ${SCCACHE_S3_KEY_PREFIX}"
 fi
 EOF
 RUN chmod +x /usr/local/bin/setup-sccache
