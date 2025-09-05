@@ -29,6 +29,7 @@ env:
 
 jobs:
   build-llm-d:
+    timeout-minutes: 180
     strategy:
       fail-fast: false
     runs-on: vllm-runner
