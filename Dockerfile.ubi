@@ -28,18 +28,11 @@ if [ "${USE_SCCACHE}" = "true" ]; then
     export CMAKE_CXX_COMPILER_LAUNCHER=sccache  
     export CMAKE_CUDA_COMPILER_LAUNCHER=sccache
     
-    mkdir -p ~/.config/sccache
-    CACHE_PREFIX="llm-d-cache/"
-    
-    cat > ~/.config/sccache/config.toml << CONFIG_EOF
-[cache.s3]
-bucket = "vllm-nightly-sccache"
-key_prefix = "${CACHE_PREFIX}"
-region = "us-west-2"
-endpoint = "s3.us-west-2.amazonaws.com"
-use_ssl = true
-no_credentials = false
-CONFIG_EOF
+    # Configure sccache via environment variables
+    export SCCACHE_BUCKET="vllm-nightly-sccache"
+    export SCCACHE_REGION="us-west-2"
+    export SCCACHE_S3_KEY_PREFIX="llm-d-cache/"
+    export SCCACHE_IDLE_TIMEOUT=0
     
     if ! /usr/local/bin/sccache --start-server; then
         echo "Warning: sccache failed to start, continuing without cache" >&2
