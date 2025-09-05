@@ -184,7 +184,11 @@ RUN --mount=type=cache,target=/var/cache/git \
     make -j$(nproc) && \
     make install-strip && \
     ldconfig && \
-    cd .. && rm -rf ucx
+    cd .. && rm -rf ucx && \
+    if [ "${USE_SCCACHE}" = "true" ]; then \
+        echo "=== UCX build complete - sccache stats ===" && \
+        sccache --show-stats; \
+    fi
 
 ENV CPPFLAGS="-I$NVSHMEM_DIR/include ${CPPFLAGS}" \
     LDFLAGS="-L$NVSHMEM_DIR/lib ${LDFLAGS}"
@@ -221,7 +225,11 @@ RUN cd /tmp && \
         .. && \
         ninja -j$(nproc) && \
         ninja install && \
-        cd /tmp && rm -rf nvshmem_src*
+        cd /tmp && rm -rf nvshmem_src* && \
+        if [ "${USE_SCCACHE}" = "true" ]; then \
+            echo "=== NVSHMEM build complete - sccache stats ===" && \
+            sccache --show-stats; \
+        fi
 
 # Pin torch, so all deps are built against the same version 
 # as vllm itself
@@ -261,7 +269,11 @@ RUN --mount=type=cache,target=/tmp/nixl-cache \
     source ${VIRTUAL_ENV}/bin/activate && \
     python -m build --no-isolation --wheel -o /wheels && \
     uv pip install --no-cache-dir . && \
-    rm -rf build
+    rm -rf build && \
+    if [ "${USE_SCCACHE}" = "true" ]; then \
+        echo "=== NIXL build complete - sccache stats ===" && \
+        sccache --show-stats; \
+    fi
 
 RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/local.conf && \
     echo "/usr/local/lib64" >> /etc/ld.so.conf.d/local.conf && \
@@ -334,7 +346,11 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     cd pplx-kernels && \
     # git checkout build-fixes && \
     NVSHMEM_PREFIX=${NVSHMEM_DIR} uv build --wheel --out-dir /wheels && \
-    cd .. && rm -rf pplx-kernels
+    cd .. && rm -rf pplx-kernels && \
+    if [ "${USE_SCCACHE}" = "true" ]; then \
+        echo "=== Compiled wheels build complete - sccache stats ===" && \
+        sccache --show-stats; \
+    fi
 
 # Build vLLM wheel
 RUN --mount=type=cache,target=/var/cache/git \
