@@ -100,3 +100,7 @@ else
 fi
 
 echo -e "${CYAN}==== Build process completed successfully! ====${NC}"
+
+rm -rf vllm-source || true
+
+echo -e "cleaned up vllm source"
