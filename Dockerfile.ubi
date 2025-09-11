@@ -253,13 +253,18 @@ RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/local.conf && \
 WORKDIR /workspace
 
 # Define commit SHAs as build args to avoid layer invalidation
-ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
+# ARG LMCACHE_REPO_URL=https://github.com/neuralmagic/LMCache.git
+# ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
+
+ARG LMCACHE_REPO_URL=https://github.com/LMCache/LMCache.git
+# LMCache Release v0.3.6 head commit sha
+ARG LMCACHE_COMMIT_SHA=cad4db10592e8487d1e0bbd02d1a6f92c37d0581
 ARG VLLM_COMMIT_SHA=53415653ff24be03e7c90f5b42ef9cb3f72aad71
 
 # Define if lmcache should be built 
 # Clone repositories with cache mounts
 RUN --mount=type=cache,target=/var/cache/git \
-    git clone https://github.com/neuralmagic/LMCache.git && \
+    git clone ${LMCACHE_REPO_URL} && \
     cd LMCache && \
     git checkout -q $LMCACHE_COMMIT_SHA && \
     cd .. && \
@@ -332,7 +337,7 @@ ARG CUDA_PATCH=1
 ARG PYTHON_VERSION
 ARG NVSHMEM_VERSION=3.3.20
 
-RUN cat > /tmp/constraints.txt << 'EOF'
+RUN cat > /tmp/constraints.txt <<'EOF'
 torch==2.7.1
 EOF
 
@@ -434,6 +439,8 @@ RUN --mount=type=cache,target=/var/cache/git \
     fi; \
     uv pip install "nvidia-nccl-cu12>=2.26.2.post1" && \
     rm -rf /tmp/wheels
+
+COPY docs/infra-providers/weka/weka-check-cufile /usr/local/bin
 
 RUN dnf autoremove -y && dnf clean all
 
