@@ -10,6 +10,7 @@ This guide demonstrates how to deploy the simulator `ghcr.io/llm-d/llm-d-inferen
 
 - Have the [proper client tools installed on your local system](../prereq/client-setup/README.md) to use this guide.
 - Configure and deploy your [Gateway control plane](../prereq/gateway-provider/README.md).
+- Have the [Monitoring stack](../../docs/monitoring/README.md) installed on your system.
 
 **_NOTE:_** Unlike other examples which require models, the simulator stubs the vLLM server and so no HuggingFace token is needed.
 
@@ -46,9 +47,9 @@ You can also customize your gateway, for more information on how to do that see 
 ```bash
 helm list -n ${NAMESPACE}
 NAME        NAMESPACE   REVISION   UPDATED                               STATUS     CHART                       APP VERSION
-gaie-sim    llm-d-sim   1          2025-08-24 11:44:26.88254 -0700 PDT   deployed   inferencepool-v0.5.1        v0.5.1
-infra-sim   llm-d-sim   1          2025-08-24 11:44:23.11688 -0700 PDT   deployed   llm-d-infra-v1.3.0          v0.3.0
-ms-sim      llm-d-sim   1          2025-08-24 11:44:32.17112 -0700 PDT   deployed   llm-d-modelservice-v0.2.7   v0.2.0
+gaie-sim    llm-d-sim   1          2025-08-24 11:44:26.88254 -0700 PDT   deployed   inferencepool-v1.0.0-rc.4        v1.0.0-rc.4
+infra-sim   llm-d-sim   1          2025-08-24 11:44:23.11688 -0700 PDT   deployed   llm-d-infra-v1.3.1          v0.3.0
+ms-sim      llm-d-sim   1          2025-08-24 11:44:32.17112 -0700 PDT   deployed   llm-d-modelservice-v0.2.9   v0.2.0
 ```
 
 - Out of the box with this example you should have the following resources:

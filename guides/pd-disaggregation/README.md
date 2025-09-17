@@ -44,6 +44,7 @@ This guide expects 8 Nvidia GPUs of any kind, and RDMA via InfiniBand or RoCE be
 - Ensure your cluster infrastructure is sufficient to [deploy high scale inference](../prereq/infrastructure)
 - Configure and deploy your [Gateway control plane](../prereq/gateway-provider/README.md).
 - [Create the `llm-d-hf-token` secret in your target namespace with the key `HF_TOKEN` matching a valid HuggingFace token](../prereq/client-setup/README.md#huggingface-token) to pull models.
+- Have the [Monitoring stack](../../docs/monitoring/README.md) installed on your system.
 
 ## Installation
 
@@ -98,9 +99,9 @@ kubectl apply -f httproute.gke.yaml
 ```bash
 helm list -n ${NAMESPACE}
 NAME        NAMESPACE   REVISION    UPDATED                                 STATUS      CHART                       APP VERSION
-gaie-pd     llm-d-pd    1           2025-08-24 12:54:51.231537 -0700 PDT    deployed    inferencepool-v0.5.1        v0.5.1
+gaie-pd     llm-d-pd    1           2025-08-24 12:54:51.231537 -0700 PDT    deployed    inferencepool-v1.0.0-rc.4        v1.0.0-rc.4
 infra-pd    llm-d-pd    1           2025-08-24 12:54:46.983361 -0700 PDT    deployed    llm-d-infra-v1.2.4          v0.2.0
-ms-pd       llm-d-pd    1           2025-08-24 12:54:56.736873 -0700 PDT    deployed    llm-d-modelservice-v0.2.7   v0.2.0
+ms-pd       llm-d-pd    1           2025-08-24 12:54:56.736873 -0700 PDT    deployed    llm-d-modelservice-v0.2.9   v0.2.0
 ```
 
 - Out of the box with this example you should have the following resources:

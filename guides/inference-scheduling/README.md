@@ -16,6 +16,7 @@ This example out of the box requires 2 Nvidia GPUs of any kind (support determin
 - Ensure your cluster infrastructure is sufficient to [deploy high scale inference](../prereq/infrastructure)
 - Configure and deploy your [Gateway control plane](../prereq/gateway-provider/README.md).
 - [Create the `llm-d-hf-token` secret in your target namespace with the key `HF_TOKEN` matching a valid HuggingFace token](../prereq/client-setup/README.md#huggingface-token) to pull models.
+- Have the [Monitoring stack](../../docs/monitoring/README.md) installed on your system.
 
 ## Installation
 
@@ -80,9 +81,9 @@ kubectl apply -f httproute.yaml
 ```bash
 helm list -n ${NAMESPACE}
 NAME                        NAMESPACE                 REVISION  UPDATED                               STATUS    CHART                     APP VERSION
-gaie-inference-scheduling   llm-d-inference-scheduler 1         2025-08-24 11:24:53.231918 -0700 PDT  deployed  inferencepool-v0.5.1      v0.5.1
-infra-inference-scheduling  llm-d-inference-scheduler 1         2025-08-24 11:24:49.551591 -0700 PDT  deployed  llm-d-infra-v1.3.0        v0.3.0
-ms-inference-scheduling     llm-d-inference-scheduler 1         2025-08-24 11:24:58.360173 -0700 PDT  deployed  llm-d-modelservice-v0.2.7 v0.2.0
+gaie-inference-scheduling   llm-d-inference-scheduler 1         2025-08-24 11:24:53.231918 -0700 PDT  deployed  inferencepool-v1.0.0-rc.4      v1.0.0-rc.4
+infra-inference-scheduling  llm-d-inference-scheduler 1         2025-08-24 11:24:49.551591 -0700 PDT  deployed  llm-d-infra-v1.3.1        v0.3.0
+ms-inference-scheduling     llm-d-inference-scheduler 1         2025-08-24 11:24:58.360173 -0700 PDT  deployed  llm-d-modelservice-v0.2.9 v0.2.0
 ```
 
 - Out of the box with this example you should have the following resources:

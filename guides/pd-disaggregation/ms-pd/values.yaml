@@ -34,13 +34,13 @@ decode:
   replicas: 1
   monitoring:
     podmonitor:
-      enabled: false
+      enabled: true
       portName: "metrics" # decode vLLM service port (from routing.proxy.targetPort)
       path: "/metrics"
       interval: "30s"
   containers:
   - name: "vllm"
-    image: "ghcr.io/llm-d/llm-d-dev:pr-170"
+    image: "ghcr.io/llm-d/llm-d-dev:pr-188"
     modelCommand: vllmServe
     args:
       - "--tensor-parallel-size"
@@ -98,13 +98,13 @@ prefill:
   replicas: 4
   monitoring:
     podmonitor:
-      enabled: false
+      enabled: true
       portName: "metrics" # prefill vLLM service port (from routing.servicePort)
       path: "/metrics"
       interval: "30s"
   containers:
   - name: "vllm"
-    image: "ghcr.io/llm-d/llm-d-dev:pr-170"
+    image: "ghcr.io/llm-d/llm-d-dev:pr-188"
     modelCommand: vllmServe
     args:
       - "--block-size"
