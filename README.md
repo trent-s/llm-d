@@ -1,7 +1,7 @@
-<p>
+<p style="text-align: center;">
   <picture>
     <source media="(prefers-color-scheme: dark)">
-    <img alt="llm-d Logo" src="./docs/assets/images/llm-d-logo.png" width=38%>
+    <img alt="llm-d Logo" src="./docs/assets/images/llm-d-logo.png" width=37%>
   </picture>
 </p>
 
