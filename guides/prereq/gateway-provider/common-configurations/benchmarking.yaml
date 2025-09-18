@@ -32,5 +32,9 @@ routing:
 
 # GAIE values
 inferenceExtension:
-  # IF epp is created through gaie, set its debugLevel
-  logVerbosity: 1
+  flags:
+    - name: v
+      value: 1
+  # include pool group, whole flags get overwritten
+    - name: "pool-group"
+      value: "inference.networking.x-k8s.io"

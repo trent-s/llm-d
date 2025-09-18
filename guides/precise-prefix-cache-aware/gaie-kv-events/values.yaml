@@ -30,8 +30,11 @@ inferenceExtension:
         secretKeyRef:
           name: llm-d-hf-token
           key: HF_TOKEN
-  logVerbosity: 4
-
+  flags:
+    - name: v
+      value: 1
+    - name: "pool-group"
+      value: "inference.networking.x-k8s.io"
   pluginsConfigFile: "prefix-cache-tracking-config.yaml"
   pluginsCustomConfig: # THIS CONFIG NEEDS TO BE CHECKED FOR INF SCHEDULER NEW IMAGE, ALMOST CERTAIN THERE IS A NEW API HERE
     prefix-cache-tracking-config.yaml: |
@@ -63,9 +66,8 @@ inferenceExtension:
               weight: 1.0
             - pluginRef: max-score-picker
 inferencePool:
-  targetPortNumber: 8000 # THIS IS GKE ONLY
-  targetPorts:
-    - number: 8000
+  apiVersion: inference.networking.x-k8s.io/v1alpha2 # use old API version for inference
+  targetPortNumber: 8000
   modelServerType: vllm
   modelServers:
     matchLabels:

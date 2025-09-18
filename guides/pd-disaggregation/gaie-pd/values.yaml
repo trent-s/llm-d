@@ -43,9 +43,8 @@ inferenceExtension:
     - name: "pool-group"
       value: "inference.networking.x-k8s.io"
 inferencePool:
-  targetPortNumber: 8000 # THIS IS GKE ONLY
-  targetPorts:
-    - number: 8000
+  apiVersion: inference.networking.x-k8s.io/v1alpha2 # use old API version for inference
+  targetPortNumber: 8000
   modelServerType: vllm
   modelServers:
     matchLabels:
