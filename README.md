@@ -1,9 +1,11 @@
-<p style="text-align: center;">
-  <picture>
-    <source media="(prefers-color-scheme: dark)">
-    <img alt="llm-d Logo" src="./docs/assets/images/llm-d-logo.png" width=37%>
-  </picture>
-</p>
+<div style="display: flex; justify-content: center;">
+  <p>
+    <picture>
+      <source media="(prefers-color-scheme: dark)">
+      <img alt="llm-d Logo" src="./docs/assets/images/llm-d-logo.png" width="37%">
+    </picture>
+  </p>
+</div>
 
 <h1>
 High Performance Distributed Inference on Kubernetes
