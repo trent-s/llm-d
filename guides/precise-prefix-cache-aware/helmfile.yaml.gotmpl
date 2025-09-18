@@ -68,5 +68,7 @@ releases:
         value: {{ printf "gaie-%s" $rn | quote }}
       - name: "routing.parentRefs[0].name"
         value: {{ printf "infra-%s-inference-gateway" $rn | quote }}
+      - name: "decode.containers[0].env[0].value"
+        value: {{ printf "%s" $rn | quote }}
     labels:
       kind: inference-stack

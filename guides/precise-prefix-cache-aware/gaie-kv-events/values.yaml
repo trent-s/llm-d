@@ -52,7 +52,7 @@ inferenceExtension:
               kvBlockIndexConfig:
                 enableMetrics: true                   # enable kv-block index metrics (prometheus)
                 metricsLoggingInterval: 60000000000   # log kv-block metrics as well (1m in nanoseconds)
-        - type: kv-cache-scorer # kv-cache-utilization
+        - type: kv-cache-utilization-scorer
         - type: queue-scorer
         - type: max-score-picker
       schedulingProfiles:
@@ -60,7 +60,7 @@ inferenceExtension:
           plugins:
             - pluginRef: prefix-cache-scorer
               weight: 2.0
-            - pluginRef: kv-cache-scorer
+            - pluginRef: kv-cache-utilization-scorer
               weight: 1.0
             - pluginRef: queue-scorer
               weight: 1.0
