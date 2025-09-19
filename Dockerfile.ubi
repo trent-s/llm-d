@@ -62,11 +62,11 @@ WORKDIR /workspace
 
 # Create UV constraint files
 RUN cat > /tmp/build-constraints.txt <<'EOF'
-torch==2.7.1
+torch==2.8.0
 EOF
 
 RUN cat > /tmp/constraints.txt <<'EOF'
-torch==2.7.1
+torch==2.8.0
 EOF
 
 ENV LANG=C.UTF-8 \
@@ -202,7 +202,7 @@ WORKDIR /workspace
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=53415653ff24be03e7c90f5b42ef9cb3f72aad71
+ARG VLLM_COMMIT_SHA=e017120ed146cc3069d18428322d67881cb95e67
 
 # Define if lmcache should be built 
 # Clone repositories with cache mounts
@@ -281,7 +281,7 @@ ARG PYTHON_VERSION
 ARG NVSHMEM_VERSION=3.3.20
 
 RUN cat > /tmp/constraints.txt << 'EOF'
-torch==2.7.1
+torch==2.8.0
 EOF
 
 ENV LANG=C.UTF-8 \
@@ -333,7 +333,7 @@ COPY --from=builder /wheels/*.whl /tmp/wheels/
 
 # Define commit SHAs as build args to avoid layer invalidation
 ARG LMCACHE_COMMIT_SHA=0db8ae4746a207a72483d716b5f82545a2ead24b
-ARG VLLM_COMMIT_SHA=53415653ff24be03e7c90f5b42ef9cb3f72aad71
+ARG VLLM_COMMIT_SHA=e017120ed146cc3069d18428322d67881cb95e67
 
 ARG VLLM_PREBUILT=0
 
