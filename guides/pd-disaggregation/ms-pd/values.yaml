@@ -30,6 +30,9 @@ routing:
     create: false
 
 decode:
+  parallelism:
+    tensor: 4
+    data: 1
   create: true
   replicas: 1
   monitoring:

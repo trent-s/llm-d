@@ -16,7 +16,7 @@ inferenceExtension:
     gke:
       enable: false
   flags:
-    - name: "pool-group"
+    - name: "pool-group" # TODO: remove once GAIE v1.0.1 lands
       value: "inference.networking.x-k8s.io" # This should match the inferencePool.apiVersion below.
   pluginsConfigFile: "custom-plugins.yaml"
   pluginsCustomConfig:

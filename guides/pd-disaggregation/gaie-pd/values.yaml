@@ -10,7 +10,7 @@ inferenceExtension:
   pluginsCustomConfig: # THIS CONFIG NEEDS TO BE CHECKED FOR INF SCHEDULER NEW IMAGE
     pd-config.yaml: |
       # ALWAYS DO PD IN THIS EXAMPLE (THRESHOLD 0)
-      apiVersion: inference.networking.x-k8s.io/v1alpha2
+      apiVersion: inference.networking.x-k8s.io/v1alpha1
       kind: EndpointPickerConfig
       plugins:
       - type: prefill-header-handler
@@ -40,7 +40,7 @@ inferenceExtension:
           weight: 1.0
         - pluginRef: max-score-picker
   flags:
-    - name: "pool-group"
+    - name: "pool-group" # TODO: remove once GAIE v1.0.1 lands
       value: "inference.networking.x-k8s.io"
     - name: "v"
       value: "4"
