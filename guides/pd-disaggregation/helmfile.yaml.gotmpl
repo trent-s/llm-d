@@ -23,14 +23,15 @@ environments:
 repositories:
   - name: llm-d-modelservice
     url: https://llm-d-incubation.github.io/llm-d-modelservice/
-  - name: llm-d-infra
-    url: https://llm-d-incubation.github.io/llm-d-infra/
+  # - name: llm-d-infra
+  #   url: https://llm-d-incubation.github.io/llm-d-infra/
 
 releases:
   - name: {{ printf "infra-%s" $rn | quote }}
     namespace: {{ $ns }}
-    chart: llm-d-infra/llm-d-infra
-    version: v1.3.1
+    # chart: llm-d-infra/llm-d-infra
+    # version: v1.3.1
+    chart: ../../../llm-d-infra/charts/llm-d-infra
     installed: true
     labels:
       type: infrastructure
@@ -57,8 +58,10 @@ releases:
     {{- end }}
     {{- if or (eq .Environment.Name "istioBench") (eq .Environment.Name "default") }}
       - inferenceExtension:
-          logVerbosity: {{ .Environment.Values.inferenceExtension.logVerbosity }}
-    {{- end}}
+          flags: 
+            {{ .Environment.Values.inferenceExtension.flags | toYaml | nindent 12 }}
+    {{- end }}
+      
     labels:
       kind: inference-stack
 
