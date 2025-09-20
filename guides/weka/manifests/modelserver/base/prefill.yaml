@@ -27,13 +27,11 @@ spec:
             - true
       serviceAccountName: llama-3-3-70b-instruct-fp8-dynamic
       volumes:
+        - name: weka-storage # gets patched in overlays
         - name: shm
           emptyDir:
             medium: Memory
             sizeLimit: 16Gi
-        - name: weka-pvc
-          persistentVolumeClaim:
-            claimName: wekafs-amg # Is this the correct PVC name?
         - name: host-node-cufile
           hostPath:
             path: ~/amg_stable/cufile.json # Load the file on Host (~/amg_stable/cufile.json)
@@ -99,7 +97,7 @@ spec:
           volumeMounts:
             - name: shm
               mountPath: /dev/shm
-            - name: weka-pvc
+            - name: weka-storage
               mountPath: /mnt/weka
             - name: host-node-cufile
               mountPath: /etc/cufile.json # Mount from ~/amg_stable/cufile.json to /etc/cufile.json in container
