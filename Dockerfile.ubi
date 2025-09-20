@@ -451,7 +451,7 @@ RUN --mount=type=cache,target=/var/cache/git \
     uv pip install "nvidia-nccl-cu12>=2.26.2.post1" && \
     rm -rf /tmp/wheels
 
-COPY docs/infra-providers/weka/weka-check-cufile /usr/local/bin
+COPY docs/infra-providers/weka/gds-cufile-probe /usr/local/bin
 
 RUN dnf autoremove -y && dnf clean all
 
