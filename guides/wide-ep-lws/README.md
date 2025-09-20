@@ -108,11 +108,11 @@ pod/deepseek-r1-epp-84dd98f75b-r6lvh         1/1     Running   0          2m14s
 pod/wide-ep-llm-d-prefill-0                  1/1     Running   0          2m13s
 
 NAME                                            TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                        AGE
-service/infra-wide-ep-inference-gateway-istio   LoadBalancer   10.16.1.34    10.16.4.2     15021:30312/TCP,80:33662/TCP   2m22s
-service/wide-ep-ip-1e480070                  ClusterIP      None          <none>        54321/TCP                      2d4h
-service/wide-ep-llm-d-decode    ClusterIP      None          <none>        <none>                         2m13s
-service/deepseek-r1-epp         ClusterIP      10.16.1.137   <none>        9002/TCP                       2d4h
-service/wide-ep-llm-d-prefill   ClusterIP      None          <none>        <none>                         2m13s
+service/infra-wide-ep-inference-gateway-istio   ClusterIP      10.16.1.34    10.16.4.2     15021:30312/TCP,80:33662/TCP   2m22s
+service/wide-ep-ip-1e480070                     ClusterIP      None          <none>        54321/TCP                      2d4h
+service/wide-ep-llm-d-decode                    ClusterIP      None          <none>        <none>                         2m13s
+service/deepseek-r1-epp                         ClusterIP      10.16.1.137   <none>        9002/TCP                       2d4h
+service/wide-ep-llm-d-prefill                   ClusterIP      None          <none>        <none>                         2m13s
 
 NAME                                                    READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/infra-wide-ep-inference-gateway-istio   1/1     1            1           2m22s

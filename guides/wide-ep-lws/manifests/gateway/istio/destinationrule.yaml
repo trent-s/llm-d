@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: wide-ep-inference-gateway
 spec:
-  host: deepseek-r1-epp.cluster.svc.local
+  host: deepseek-r1-epp
   trafficPolicy:
     connectionPool:
       http:
@@ -18,3 +18,5 @@ spec:
     tls:
       insecureSkipVerify: true
       mode: SIMPLE
+    # loadBalancer:
+    #   simple: ROUND_ROBIN
