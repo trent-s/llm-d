@@ -117,6 +117,17 @@ RUN dnf -q install -y dnf-plugins-core && \
         ninja-build \
         xz \
         rsync \
+        # GDS deps
+        gds-tools-${CUDA_MAJOR}-${CUDA_MINOR} \
+        nvidia-gds-${CUDA_MAJOR}-${CUDA_MINOR} \
+        libcufile-${CUDA_MAJOR}-${CUDA_MINOR} \
+        libcufile-devel-${CUDA_MAJOR}-${CUDA_MINOR} \
+        librdmacm \
+        librdmacm-devel \
+        infiniband-diags \
+        libffi-devel \
+        kmod \
+        iproute \
     && dnf clean all
 
 # Setup Python virtual environment
