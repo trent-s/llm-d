@@ -3,7 +3,7 @@ inferenceExtension:
   image:
     name: llm-d-inference-scheduler
     hub: ghcr.io/llm-d
-    tag: v0.3.0-rc.1
+    tag: v0.3.0-rc.2
   extProcPort: 9002
   monitoring:
     interval: "10s"
@@ -63,4 +63,4 @@ inferencePool:
   apiVersion: inference.networking.x-k8s.io/v1alpha2
   modelServers:
     matchLabels:
-      llm-d.ai/model: DeepSeek-R1-0528
+      llm-d.ai/inferenceServing: "true"

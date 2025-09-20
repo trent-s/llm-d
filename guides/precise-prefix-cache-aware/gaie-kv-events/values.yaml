@@ -34,7 +34,7 @@ inferenceExtension:
     - name: "pool-group" # TODO: remove once GAIE v1.0.1 lands
       value: "inference.networking.x-k8s.io"
     - name: v
-      value: 1
+      value: 2
   pluginsConfigFile: "prefix-cache-tracking-config.yaml"
   pluginsCustomConfig: # THIS CONFIG NEEDS TO BE CHECKED FOR INF SCHEDULER NEW IMAGE, ALMOST CERTAIN THERE IS A NEW API HERE
     prefix-cache-tracking-config.yaml: |
@@ -72,4 +72,3 @@ inferencePool:
   modelServers:
     matchLabels:
       llm-d.ai/inferenceServing: "true"
-      # app: llm-d.ai
