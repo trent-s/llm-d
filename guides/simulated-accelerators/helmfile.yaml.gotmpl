@@ -42,7 +42,10 @@ releases:
     values:
       - gaie-sim/values.yaml
     {{- if eq .Environment.Name "gke" }}
-      - provider: {{ .Environment.Values.provider }}
+      - provider:
+          name: {{ .Environment.Values.provider.name }}
+        inferencePool:
+          apiVersion: {{ .Environment.Values.inferencePool.apiVersion }}
     {{- else if or (eq .Environment.Name "istio") (eq .Environment.Name "default") }}
       - provider:
           name: {{ .Environment.Values.provider.name }}
@@ -58,7 +61,7 @@ releases:
   - name: {{ printf "ms-%s" $rn | quote }}
     namespace: {{ $ns }}
     chart: llm-d-modelservice/llm-d-modelservice
-    version: v0.2.9
+    version: v0.2.10
     installed: true
     needs:
       - {{ printf "infra-%s" $rn | quote }}
@@ -71,5 +74,9 @@ releases:
         value: {{ printf "gaie-%s" $rn | quote }}
       - name: "routing.parentRefs[0].name"
         value: {{ printf "infra-%s-inference-gateway" $rn | quote }}
+    {{- if (eq .Environment.Name "gke") }}  
+      - name: "decode.monitoring.podmonitor.enabled"
+        value: false
+    {{- end }}
     labels:
       kind: inference-stack

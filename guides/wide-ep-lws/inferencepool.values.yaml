@@ -15,9 +15,6 @@ inferenceExtension:
       enabled: false
     gke:
       enable: false
-  flags:
-    - name: "pool-group" # TODO: remove once GAIE v1.0.1 lands
-      value: "inference.networking.x-k8s.io" # This should match the inferencePool.apiVersion below.
   pluginsConfigFile: "custom-plugins.yaml"
   pluginsCustomConfig:
     custom-plugins.yaml: |
@@ -65,3 +62,21 @@ inferencePool:
     matchLabels:
       llm-d.ai/inferenceServing: "true"
       llm-d.ai/model: DeepSeek-R1-0528
+
+istio:
+  destinationRule:
+    host: deepseek-r1-epp
+    trafficPolicy:
+      tls:
+        mode: SIMPLE
+        insecureSkipVerify: true
+      connectionPool:
+        http:
+          http1MaxPendingRequests: 256000
+          maxRequestsPerConnection: 256000
+          http2MaxRequests: 256000
+          idleTimeout: "900s"
+        tcp:
+          maxConnections: 256000
+          maxConnectionDuration: "1800s"
+          connectTimeout: "900s"

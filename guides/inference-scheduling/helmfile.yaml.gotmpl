@@ -54,6 +54,8 @@ releases:
     {{- if or (eq .Environment.Name "gke") (eq .Environment.Name "gke_tpu") }}
       - provider:
           name: {{ .Environment.Values.provider.name }}
+        inferencePool:
+          apiVersion: {{ .Environment.Values.inferencePool.apiVersion }}
     {{- end }}
     # Apply destination rule for anything istio
     {{- if or (eq .Environment.Name "istio") (eq .Environment.Name "default") (eq .Environment.Name "istioBench") }}
@@ -77,8 +79,7 @@ releases:
   - name: {{ printf "ms-%s" $rn | quote }}
     namespace: {{ $ns }}
     chart: llm-d-modelservice/llm-d-modelservice
-    # version: v0.2.10
-    version: v0.2.9
+    version: v0.2.10
     installed: true
     needs:
       - {{ printf "infra-%s" $rn | quote }}
@@ -104,5 +105,9 @@ releases:
         value: {{ printf "gaie-%s" $rn | quote }}
       - name: "routing.parentRefs[0].name"
         value: {{ printf "infra-%s-inference-gateway" $rn | quote }}
+    {{- if or (eq .Environment.Name "gke") (eq .Environment.Name "gke_tpu") }}  
+      - name: "decode.monitoring.podmonitor.enabled"
+        value: false
+    {{- end }}
     labels:
       kind: inference-stack

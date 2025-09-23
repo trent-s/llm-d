@@ -47,7 +47,10 @@ releases:
       - gaie-kv-events/values.yaml
     # Apply provider name if on GKE
     {{- if eq .Environment.Name "gke" }}
-      - provider: {{ .Environment.Values.provider }}
+      - provider:
+          name: {{ .Environment.Values.provider.name }}
+        inferencePool:
+          apiVersion: {{ .Environment.Values.inferencePool.apiVersion }}
     {{- end }}
     # Apply destination rule for anything istio
     {{- if or (eq .Environment.Name "istio") (eq .Environment.Name "default") (eq .Environment.Name "istioBench") }}
@@ -93,5 +96,9 @@ releases:
         value: {{ printf "infra-%s-inference-gateway" $rn | quote }}
       - name: "decode.containers[0].env[0].value"
         value: {{ printf "%s" $rn | quote }}
+    {{- if (eq .Environment.Name "gke") }}  
+      - name: "decode.monitoring.podmonitor.enabled"
+        value: false
+    {{- end }}
     labels:
       kind: inference-stack

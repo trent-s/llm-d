@@ -1,7 +1,7 @@
 inferenceExtension:
   replicas: 1
   image:
-    # Either image will work, you just need to bring the correct plugins per image. In this example we will bring the upstream default plugin
+    # both downstream infernece-scheduler and upstream epp images can support precise KV Cache awareness based on the configurations here
     ###################
     name: llm-d-inference-scheduler
     hub: ghcr.io/llm-d
@@ -14,11 +14,6 @@ inferenceExtension:
     pullPolicy: Always
   extProcPort: 9002
   pluginsConfigFile: "default-plugins.yaml"
-  flags:
-    - name: "pool-group" # TODO: remove once GAIE v1.0.1 lands
-      value: "inference.networking.x-k8s.io"
-    - name: v
-      value: 2
 inferencePool:
   apiVersion: inference.networking.x-k8s.io/v1alpha2 # use old API version for inference
   targetPortNumber: 8000

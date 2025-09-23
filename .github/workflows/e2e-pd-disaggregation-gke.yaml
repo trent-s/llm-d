@@ -134,7 +134,11 @@ jobs:
       - name: Deploy model service and GIE with Helmfile
         run: |
           cd guides/pd-disaggregation
-          helmfile apply -e ${GATEWAY_TYPE} | tee ~/pd-disaggregation-deployment.log
+          helmfile apply -e ${GATEWAY_TYPE} \
+            --set "decode.monitoring.podmonitor.enabled=false" \
+            --set "prefill.monitoring.podmonitor.enabled=false" \
+            --skip-schema-validation \
+            | tee ~/pd-disaggregation-deployment.log
           echo "---------------------------------------" >> ~/pd-disaggregation-deployment.log
 
       - name: Deploy HTTPRoute
