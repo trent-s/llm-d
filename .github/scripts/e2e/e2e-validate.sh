@@ -34,8 +34,16 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ "${VERBOSE}" == "true" ]]; then
+  set -x
+fi
+
 # ── Helper for unique pod suffix ────────────────────────────────────────────
 gen_id() { echo $(( RANDOM % 10000 + 1 )); }
+
+# DEBUG
+kubectl get gateway -n "$NAMESPACE"
+kubectl get gateway -n "$NAMESPACE" -o yaml
 
 # ── Discover Gateway address ────────────────────────────────────────────────
 HOST="${GATEWAY_HOST:-$(kubectl get gateway -n "$NAMESPACE" \
