@@ -45,7 +45,7 @@ You can also customize your gateway, for more information on how to do that see 
 helm list -n ${NAMESPACE}
 NAME            NAMESPACE     REVISION  UPDATED                               STATUS    CHART                     APP VERSION
 gaie-kv-events  llm-d-precise 1         2025-08-24 12:05:31.484748 -0700 PDT  deployed  inferencepool-v1.0.1-rc.1      v1.0.1-rc.1
-infra-kv-events llm-d-precise 1         2025-08-24 12:05:27.485812 -0700 PDT  deployed  llm-d-infra-v1.3.1        v0.3.0
+infra-kv-events llm-d-precise 1         2025-08-24 12:05:27.485812 -0700 PDT  deployed  llm-d-infra-v1.3.3        v0.3.0
 ms-kv-events    llm-d-precise 1         2025-08-24 12:05:37.660439 -0700 PDT  deployed  llm-d-modelservice-v0.2.9 v0.2.0
 ```
 

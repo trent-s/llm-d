@@ -68,7 +68,7 @@ releases:
             host: {{ printf "gaie-%s-epp.%s.svc.cluster.local" $rn $ns | quote }}
     {{- end }}
     # Apply log level only in bench setting
-    {{- if or (eq .Environment.Name "istioBench") (eq .Environment.Name "default") }}
+    {{- if (eq .Environment.Name "istioBench") }}
       - inferenceExtension:
           flags: 
             {{ .Environment.Values.inferenceExtension.flags | toYaml | nindent 12 }}

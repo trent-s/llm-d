@@ -1,7 +1,7 @@
 inferenceExtension:
   replicas: 1
   image:
-    # both downstream infernece-scheduler and upstream epp images can support precise KV Cache awareness based on the configurations here
+    # both downstream infernece-scheduler and upstream epp image can support inference-scheduling example
     ###################
     name: llm-d-inference-scheduler
     hub: ghcr.io/llm-d
