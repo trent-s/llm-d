@@ -38,7 +38,7 @@ decode:
       cloud.google.com/gke-tpu-accelerator: "tpu-v6e-slice"
   monitoring:
     podmonitor:
-      enabled: true
+      enabled: false
       portName: "metrics"  # decode vLLM service port (from routing.proxy.targetPort)
       path: "/metrics"
       interval: "30s"

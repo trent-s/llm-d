@@ -131,7 +131,6 @@ jobs:
         run: |
           cd guides/inference-scheduling
           helmfile apply -e ${{ matrix.accelerator.helmfile_env }} \
-            --set "decode.monitoring.podmonitor.enabled=false" \
             --set "gateway.service.type=LoadBalancer" \
             --skip-schema-validation \
             | tee ~/inference-scheduling-deployment.log
