@@ -81,7 +81,7 @@ kubectl apply -f httproute.yaml
 ```bash
 helm list -n ${NAMESPACE}
 NAME                        NAMESPACE                 REVISION  UPDATED                               STATUS    CHART                     APP VERSION
-gaie-inference-scheduling   llm-d-inference-scheduler 1         2025-08-24 11:24:53.231918 -0700 PDT  deployed  inferencepool-v1.0.0      v1.0.0
+gaie-inference-scheduling   llm-d-inference-scheduler 1         2025-08-24 11:24:53.231918 -0700 PDT  deployed  inferencepool-v1.0.1-rc.1      v1.0.1-rc.1
 infra-inference-scheduling  llm-d-inference-scheduler 1         2025-08-24 11:24:49.551591 -0700 PDT  deployed  llm-d-infra-v1.3.1        v0.3.0
 ms-inference-scheduling     llm-d-inference-scheduler 1         2025-08-24 11:24:58.360173 -0700 PDT  deployed  llm-d-modelservice-v0.2.9 v0.2.0
 ```
@@ -124,7 +124,7 @@ To remove the deployment:
 
 ```bash
 # From examples/inference-scheduling
-helmfile destroy -n ${NAMESPACE}
+helmfile destroy -n ${NAMESPACE} -e <your_environment>
 
 # Or uninstall manually
 helm uninstall infra-inference-scheduling -n ${NAMESPACE}
@@ -134,7 +134,7 @@ helm uninstall ms-inference-scheduling -n ${NAMESPACE}
 
 **_NOTE:_** If you set the `$RELEASE_NAME_POSTFIX` environment variable, your release names will be different from the command above: `infra-$RELEASE_NAME_POSTFIX`, `gaie-$RELEASE_NAME_POSTFIX` and `ms-$RELEASE_NAME_POSTFIX`.
 
-**_NOTE:_** You do not need to specify your `environment` with the `-e <environment>` flag to `helmfile` for removing a installation of the guide, even if you use a non-default option. You do, however, have to set the `-n ${NAMESPACE}` otherwise it may not cleanup the releases in the proper namespace.
+**_NOTE:_** You need to specify your `environment` with the `-e <environment>` flag to `helmfile` for removing a installation of the guide when using a non-default option. IE if you deploy with `-e istio` and undeploy `-e istioBench` or vice versa, it may fail. If you encounter this it is recomended to manually uninstall all 3 releases with `helm` as shown above.
 
 ### Cleanup HTTPRoute
 
