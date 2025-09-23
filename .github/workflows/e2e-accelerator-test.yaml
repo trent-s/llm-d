@@ -72,9 +72,8 @@ jobs:
 
       - name: Fetch and checkout PR
         if: steps.check_pr.outputs.is_pr == 'true'
-        shell: bash
         run: |
-          git fetch origin pull/"$PR_OR_BRANCH"/merge:pr-"$PR_OR_BRANCH"
+          git fetch origin pull/"$PR_OR_BRANCH"/head:pr-"$PR_OR_BRANCH"
           git checkout pr-"$PR_OR_BRANCH"
 
       - name: Checkout branch

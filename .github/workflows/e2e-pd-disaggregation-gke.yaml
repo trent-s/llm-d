@@ -55,8 +55,15 @@ jobs:
 
       - name: Determine if pr_or_branch is a PR number
         id: check_pr
+        env:
+          PR_OR_BRANCH: ${{ github.event.inputs.pr_or_branch }}
+        shell: bash
         run: |
+          echo "PR_OR_BRANCH=${PR_OR_BRANCH:-main}" >> "$GITHUB_ENV"
           if [[ "$PR_OR_BRANCH" =~ ^[0-9]+$ ]]; then
+            echo "is_pr=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" = "pull_request" ]]; then
+            echo "PR_OR_BRANCH=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
             echo "is_pr=true" >> "$GITHUB_OUTPUT"
           else
             echo "is_pr=false" >> "$GITHUB_OUTPUT"
@@ -94,10 +101,14 @@ jobs:
           echo "Applying pd-disaggregation slim values..."
           # Transform ms-pd/values.yaml to a scaled-down deployment
 
-          yq e 'del(.decode.containers[0].resources.limits."rdma/ib")' -i guides/pd-disaggregation/ms-pd/values.yaml
-          yq e 'del(.decode.containers[0].resources.requests."rdma/ib")' -i guides/pd-disaggregation/ms-pd/values.yaml
-          yq e 'del(.prefill.containers[0].resources.limits."rdma/ib")' -i guides/pd-disaggregation/ms-pd/values.yaml
-          yq e 'del(.prefill.containers[0].resources.requests."rdma/ib")' -i guides/pd-disaggregation/ms-pd/values.yaml
+          # Set Decode to 1 GPU
+          yq 'del(.decode.containers[0].args[1])' guides/pd-disaggregation/ms-pd/values.yaml
+          yq 'del(.decode.containers[0].args[0])' guides/pd-disaggregation/ms-pd/values.yaml
+          yq e '.decode.containers[0].resources.limits."nvidia.com/gpu" = "1"' -i guides/pd-disaggregation/ms-pd/values.yaml
+          yq e '.decode.containers[0].resources.requests."nvidia.com/gpu" = "1"' -i guides/pd-disaggregation/ms-pd/values.yaml
+          yq e '.decode.parallelism.tensor = 1' -i guides/pd-disaggregation/ms-pd/values.yaml
+
+          # Set Prefill to 1 GPU
           yq e '.prefill.replicas = 1' -i guides/pd-disaggregation/ms-pd/values.yaml
 
           # Verify the slimmed down values
@@ -134,11 +145,7 @@ jobs:
       - name: Deploy model service and GIE with Helmfile
         run: |
           cd guides/pd-disaggregation
-          helmfile apply -e ${GATEWAY_TYPE} \
-            --set "decode.monitoring.podmonitor.enabled=false" \
-            --set "prefill.monitoring.podmonitor.enabled=false" \
-            --skip-schema-validation \
-            | tee ~/pd-disaggregation-deployment.log
+          helmfile apply -e ${GATEWAY_TYPE} | tee ~/pd-disaggregation-deployment.log
           echo "---------------------------------------" >> ~/pd-disaggregation-deployment.log
 
       - name: Deploy HTTPRoute

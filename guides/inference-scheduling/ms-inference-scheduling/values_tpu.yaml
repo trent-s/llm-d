@@ -29,7 +29,12 @@ routing:
   epp:
     create: false
 
+accelerator:
+  type: google
+
 decode:
+  parallelism:
+    tensor: 8
   create: true
   replicas: 2
   extraConfig:
@@ -55,11 +60,6 @@ decode:
       - containerPort: 8200
         name: metrics
         protocol: TCP
-    resources:
-      limits:
-        google.com/tpu: 8
-      requests:
-        google.com/tpu: 8
     mountModelVolume: true
     volumeMounts:
     - name: metrics-volume
@@ -71,6 +71,5 @@ decode:
     emptyDir: {}
   - name: torch-compile-cache
     emptyDir: {}
-
 prefill:
   create: false

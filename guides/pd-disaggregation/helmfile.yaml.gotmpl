@@ -35,6 +35,11 @@ releases:
     labels:
       type: infrastructure
       kind: inference-stack
+    values:
+    {{- if (eq .Environment.Name "gke") }}
+      - gateway: 
+          {{ .Environment.Values.gateway | toYaml | nindent 10 }}
+    {{- end }}
 
   - name: {{ printf "gaie-%s" $rn | quote }}
     namespace: {{ $ns }}
@@ -95,14 +100,14 @@ releases:
       - name: "routing.parentRefs[0].name"
         value: {{ printf "infra-%s-inference-gateway" $rn | quote }}
     {{- if eq .Environment.Name "gke" }}
-      - name: "decode.containers[0].resources.limits.rdma/ib"
-        value: null
-      - name: "decode.containers[0].resources.requests.rdma/ib"
-        value: null
-      - name: "prefill.containers[0].resources.limits.rdma/ib"
-        value: null
-      - name: "prefill.containers[0].resources.requests.rdma/ib"
-        value: null
+      - name: 'decode.containers[0].resources.limits.rdma/ib'
+        value: "null"
+      - name: 'decode.containers[0].resources.requests.rdma/ib'
+        value: "null"
+      - name: 'prefill.containers[0].resources.limits.rdma/ib'
+        value: "null"
+      - name: 'prefill.containers[0].resources.requests.rdma/ib'
+        value: "null"
       - name: "decode.monitoring.podmonitor.enabled"
         value: false
       - name: "prefill.monitoring.podmonitor.enabled"
