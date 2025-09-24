@@ -83,11 +83,14 @@ spec:
                                 "log_balancedness":"False"}' \
                 --enable-dbo \
                 --dbo-decode-token-threshold 32 \
+                --compilation_config '{"cudagraph_mode": "full_decode_only"}' \
                 --kv_transfer_config '{"kv_connector":"NixlConnector",
                                         "kv_role":"kv_both"}'
           env:
-          #- name: VLLM_CACHE_ROOT
-          # value: "/vllm-cache"
+          - name: VLLM_SKIP_DEEP_GEMM_WARMUP
+            value: "1"
+          - name: VLLM_CACHE_ROOT
+            value: "/vllm-cache"
           - name: CUDA_LAUNCH_BLOCKING
             value: "1"
           - name: VLLM_MOE_DP_CHUNK_SIZE
@@ -124,7 +127,7 @@ spec:
           - name: NCCL_IB_HCA
             value: ibp
           - name: VLLM_LOGGING_LEVEL
-            value: INFO
+            value: DEBUG
           - name: HF_HUB_CACHE
             value: /huggingface-cache
           - name: VLLM_NIXL_SIDE_CHANNEL_HOST
