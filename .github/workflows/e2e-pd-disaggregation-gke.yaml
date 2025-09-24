@@ -101,13 +101,6 @@ jobs:
           echo "Applying pd-disaggregation slim values..."
           # Transform ms-pd/values.yaml to a scaled-down deployment
 
-          # Set Decode to 1 GPU
-          yq 'del(.decode.containers[0].args[1])' guides/pd-disaggregation/ms-pd/values.yaml
-          yq 'del(.decode.containers[0].args[0])' guides/pd-disaggregation/ms-pd/values.yaml
-          yq e '.decode.containers[0].resources.limits."nvidia.com/gpu" = "1"' -i guides/pd-disaggregation/ms-pd/values.yaml
-          yq e '.decode.containers[0].resources.requests."nvidia.com/gpu" = "1"' -i guides/pd-disaggregation/ms-pd/values.yaml
-          yq e '.decode.parallelism.tensor = 1' -i guides/pd-disaggregation/ms-pd/values.yaml
-
           # Set Prefill to 1 GPU
           yq e '.prefill.replicas = 1' -i guides/pd-disaggregation/ms-pd/values.yaml
 
