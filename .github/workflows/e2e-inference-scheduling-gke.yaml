@@ -112,10 +112,6 @@ jobs:
         run: |
           ./guides/prereq/client-setup/install-deps.sh | tee ~/install-deps.log
 
-      - name: Ensure Gateway + GAIE CRDs exist
-        run: |
-          ./guides/prereq/gateway-provider/install-gateway-provider-dependencies.sh | tee ~/install-gateway+-crds.log
-
       - name: Create namespace
         run: |
           kubectl create namespace "${NAMESPACE}" || echo "Namespace already exists"
@@ -196,12 +192,14 @@ jobs:
           echo "=== HTTPRoutes ==="
           kubectl get httproutes -n "${NAMESPACE}" || true
           echo ""
+          echo "=== Gateway ==="
+          kubectl get Gateway -n "${NAMESPACE}" || true
+          echo ""
 
       - name: Verify installation and run inference tests
         run: |
-          set -x
           cd .github/scripts/e2e
-          ./e2e-validate.sh -n "${NAMESPACE}"
+          ./e2e-validate.sh -n "${NAMESPACE}" -v
 
       - name: Collect and upload Kubernetes pod logs
         if: always()

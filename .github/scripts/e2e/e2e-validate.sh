@@ -41,10 +41,6 @@ fi
 # ── Helper for unique pod suffix ────────────────────────────────────────────
 gen_id() { echo $(( RANDOM % 10000 + 1 )); }
 
-# DEBUG
-kubectl get gateway -n "$NAMESPACE"
-kubectl get gateway -n "$NAMESPACE" -o yaml
-
 # ── Discover Gateway address ────────────────────────────────────────────────
 HOST="${GATEWAY_HOST:-$(kubectl get gateway -n "$NAMESPACE" \
           -o jsonpath='{.items[0].status.addresses[0].value}' 2>/dev/null || true)}"
