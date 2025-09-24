@@ -52,7 +52,6 @@ decode:
       - "128"
       - "--kv-transfer-config"
       - '{"kv_connector":"NixlConnector", "kv_role":"kv_both"}'
-      - "--disable-log-requests"
       - "--disable-uvicorn-access-log"
       - "--max-model-len"
       - "32000"
@@ -114,7 +113,6 @@ prefill:
       - "128"
       - "--kv-transfer-config"
       - '{"kv_connector":"NixlConnector", "kv_role":"kv_both"}'
-      - "--disable-log-requests"
       - "--disable-uvicorn-access-log"
       - "--max-model-len"
       - "32000"

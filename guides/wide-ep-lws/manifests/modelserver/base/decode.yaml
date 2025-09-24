@@ -65,7 +65,6 @@ spec:
               exec vllm serve \
                 deepseek-ai/DeepSeek-R1-0528 \
                 --port 8200 \
-                --disable-log-requests \
                 --disable-uvicorn-access-log \
                 --enable-expert-parallel \
                 --data-parallel-hybrid-lb \
