@@ -13,7 +13,6 @@ spec:
       - group: inference.networking.k8s.io
         kind: InferencePool
         name: gaie-inference-scheduling
-        port: 8000
         weight: 1
       matches:
       - path:
