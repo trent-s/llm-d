@@ -382,7 +382,7 @@ ENV LLM_D_MODELS_DIR=/var/lib/llm-d/models \
 
 # creates default models directory and makes path writeable for both root and default user, with symlink for convenience
 # find command keeps group=0 on all new subdirs created later
-RUN mkdir -p "$LLM_D_MODELS_DIR" "$HF_HOME" "$TRANSFORMERS_CACHE" && \
+RUN mkdir -p "$LLM_D_MODELS_DIR" "$HF_HOME" && \
     chown -R root:0 /var/lib/llm-d && \
     chmod -R g+rwX /var/lib/llm-d && \
     find /var/lib/llm-d -type d -exec chmod g+s {} \; && \
