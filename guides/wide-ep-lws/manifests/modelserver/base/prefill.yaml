@@ -18,18 +18,14 @@ spec:
           llm-d.ai/role: prefill
       spec:
         volumes:
-          - emptyDir:
+          - name: dshm
+            emptyDir:
               medium: Memory
               sizeLimit: 2Gi # 2Gi for NCCL 2.27 to be safe
-            name: dshm
-          - name: model-storage
-            emptyDir:
-              sizeLimit: 100Gi
           
         containers:
         - name: vllm-worker
-          #image: ghcr.io/llm-d/llm-d:v0.2.0
-          image: quay.io/tms/llm-d-dev:0.3.0-9df8da548e920f83d4f7710e481f106c2ac92d31
+          image: ghcr.io/llm-d/llm-d-dev:pr-253@sha256:f6cbe2e42170abe0126e4c27a95b4828a4cf95856b5a8d6f6a6cb3c17c70be3b
           securityContext:
             capabilities:
               add:
@@ -68,6 +64,8 @@ spec:
                 --kv_transfer_config '{"kv_connector":"NixlConnector",
                                         "kv_role":"kv_both"}'
           env:
+          #- name: VLLM_CACHE_ROOT
+          #  value: "/vllm-cache"
           - name: DP_SIZE_LOCAL
             value: "8"
           - name: TRITON_LIBCUDA_PATH
@@ -129,8 +127,10 @@ spec:
               nvidia.com/gpu: "8"
           
           volumeMounts:
-            - mountPath: /dev/shm
-              name: dshm
-            - mountPath: /huggingface-cache
-              name: hf-cache
+            - name: dshm
+              mountPath: /dev/shm
+            - name: hf-cache
+              mountPath: /huggingface-cache
+            - name: vllm-cache
+              mountPath: /vllm-cache
           workingDir: /code

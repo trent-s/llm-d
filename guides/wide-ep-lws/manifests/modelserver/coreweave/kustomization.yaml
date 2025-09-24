@@ -15,6 +15,14 @@ patches:
           hostPath:
                 path: /mnt/local/hf-cache
                 type: DirectoryOrCreate
+      - op: add
+        path: /spec/leaderWorkerTemplate/workerTemplate/spec/volumes/-
+        value:
+          name: vllm-cache
+          hostPath:
+                path: /mnt/local/vllm-cache
+                type: DirectoryOrCreate
+
       # Add RMDA config.
       - op: add
         path: /spec/leaderWorkerTemplate/workerTemplate/spec/containers/0/resources/limits/rdma~1ib
