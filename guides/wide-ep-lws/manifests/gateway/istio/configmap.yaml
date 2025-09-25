@@ -30,3 +30,6 @@ data:
               requests:
                 cpu: 2
                 memory: 4Gi
+  service: |
+    spec:
+      type: LoadBalancer
