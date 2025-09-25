@@ -9,7 +9,7 @@ metadata:
 spec:
   replicas: 1
   leaderWorkerTemplate:
-    size: 16
+    size: 8
     workerTemplate:
       metadata:
         labels:
