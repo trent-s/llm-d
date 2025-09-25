@@ -87,11 +87,8 @@ releases:
     values:
       - ms-pd/values.yaml
     {{- if or (eq .Environment.Name "istioBench") (eq .Environment.Name "default") }}
-      - routing:
-          proxy:
-            debugLevel: {{ .Environment.Values.routing.proxy.debugLevel }}
-          epp:
-            debugLevel: {{ .Environment.Values.routing.epp.debugLevel }}
+      - routing: 
+          {{ .Environment.Values.routing | toYaml | nindent 10 }}
     {{- end }}
     set:
     # apply release name derived values
@@ -99,6 +96,8 @@ releases:
         value: {{ printf "gaie-%s" $rn | quote }}
       - name: "routing.parentRefs[0].name"
         value: {{ printf "infra-%s-inference-gateway" $rn | quote }}
+      - name: "routing.inferenceModel.name"
+        value: {{ printf "gaie-%s" $rn | quote }}
     {{- if eq .Environment.Name "gke" }}
       - name: 'decode.containers[0].resources.limits.rdma/ib'
         value: "null"

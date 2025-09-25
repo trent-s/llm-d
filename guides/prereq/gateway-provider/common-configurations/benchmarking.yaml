@@ -17,6 +17,9 @@ routing:
   # IF epp is created through ms, set its debugLevel
   epp:
     debugLevel: 1
+  inferenceModel:
+    criticality: Critical
+    create: true
 
 # GAIE values
 inferenceExtension:

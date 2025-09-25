@@ -37,9 +37,8 @@ inferenceExtension:
       kind: EndpointPickerConfig
       plugins:
         - type: single-profile-handler
-        - type: prefix-cache-scorer
+        - type: precise-prefix-cache-scorer
           parameters:
-            mode: cache_tracking
             indexerConfig:
               tokenProcessorConfig:
                 blockSize: 64                         # must match vLLM block size if not default (16)
@@ -53,7 +52,7 @@ inferenceExtension:
       schedulingProfiles:
         - name: default
           plugins:
-            - pluginRef: prefix-cache-scorer
+            - pluginRef: precise-prefix-cache-scorer
               weight: 2.0
             - pluginRef: kv-cache-utilization-scorer
               weight: 1.0

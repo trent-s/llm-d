@@ -44,10 +44,10 @@ decode:
         --host 0.0.0.0 \
         --port 8200 \
         --block-size 64 \
-        --prefix-caching-hash-algo sha256_cbor_64bit \
+        --prefix-caching-hash-algo sha256_cbor \
         --enforce-eager \
         --kv-transfer-config '{"kv_connector":"NixlConnector", "kv_role":"kv_both"}' \
-        --kv-events-config "{\"enable_kv_cache_events\":true,\"publisher\":\"zmq\",\"endpoint\":\"tcp://gaie-${GAIE_RELEASE_NAME_POSTFIX}-epp.${NAMESPACE}.svc.cluster.local:5557\",\"topic\":\"kv@${POD_IP}@Qwen/Qwen3-0.6B\"}" \
+        --kv-events-config "{\"enable_kv_cache_events\":true,\"publisher\":\"zmq\",\"endpoint\":\"tcp://gaie-${GAIE_RELEASE_NAME_POSTFIX}-epp.${NAMESPACE}.svc.cluster.local:5557\",\"topic\":\"kv@${POD_IP}@Qwen/Qwen3-0.6B\"}"
     env:
       - name: GAIE_RELEASE_NAME_POSTFIX # index 0 matters because of set in helmfile
       - name: NAMESPACE
