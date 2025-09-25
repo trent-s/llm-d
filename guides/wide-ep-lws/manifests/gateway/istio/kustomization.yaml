@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - ../base
 - telemetry.yaml
+- inferencemodel.yaml
 
 patches:
 - path: gateway.yaml
