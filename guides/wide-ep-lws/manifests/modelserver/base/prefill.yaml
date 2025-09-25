@@ -64,12 +64,18 @@ spec:
                 --data-parallel-start-rank $START_RANK \
                 --kv_transfer_config '{"kv_connector":"NixlConnector",
                                         "kv_role":"kv_both"}' \
-                --async-scheduling \
                 --enable-dbo \
                 --dbo-decode-token-threshold 32
           env:
           - name: VLLM_CACHE_ROOT
             value: "/vllm-cache"
+
+            # vLLM warms up DeepGEMM kernels to avoid high-variance slowdowns due to jitting.
+            # Especially important for the prefill instances, affecting TTFT.
+            # Safe to set once the DeepGEMM cache is on every node.
+          #- name: VLLM_SKIP_DEEP_GEMM_WARMUP
+          #  value: "1"
+
           - name: DP_SIZE_LOCAL
             value: "8"
           - name: TRITON_LIBCUDA_PATH
