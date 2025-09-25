@@ -135,7 +135,7 @@ jobs:
         run: |
           cd guides/simulated-accelerators
           echo "Deploying HTTPRoute..."
-          kubectl apply -f httproute.yaml
+          kubectl apply -f httproute.yaml -n ${{ env.NAMESPACE }}
 
       - name: Wait for all simulation pods to be ready
         run: |

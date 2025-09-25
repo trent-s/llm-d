@@ -402,7 +402,9 @@ jobs:
             set -x
             cd llm-d/guides/${{ matrix.deployment.guide_dir }}
             echo "Deploying HTTPRoute..."
-            kubectl apply -f httproute.yaml | tee ~/${{ matrix.deployment.helm_log_file }}
+            kubectl apply -f httproute.yaml \
+              -n "${{ matrix.deployment.namespace }}" \
+              | tee ~/${{ matrix.deployment.helm_log_file }}
             echo "---------------------------------------" >> ~/${{ matrix.deployment.helm_log_file }}
           EOF
 
