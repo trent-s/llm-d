@@ -107,8 +107,6 @@ releases:
         value: {{ printf "gaie-%s" $rn | quote }}
       - name: "routing.parentRefs[0].name"
         value: {{ printf "infra-%s-inference-gateway" $rn | quote }}
-      - name: "routing.inferenceModel.name"
-        value: {{ printf "gaie-%s" $rn | quote }}
     {{- if or (eq .Environment.Name "gke") (eq .Environment.Name "gke_tpu") }}  
       - name: "decode.monitoring.podmonitor.enabled"
         value: false
