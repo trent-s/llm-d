@@ -11,9 +11,8 @@ modelArtifacts:
 
 routing:
   modelName: Qwen/Qwen3-0.6B  # Match the model name
-  # Enable HTTPRoute for inference scheduling
   httpRoute:
-    create: true
+    create: false
 
 # DigitalOcean-specific container configuration
 decode:

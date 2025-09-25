@@ -336,7 +336,6 @@ jobs:
               - infra-kv-events
               - gaie-kv-events
               - ms-kv-events
-            create_out_of_band_http_route: false
 
           - name: inference-scheduling
             namespace: llm-d-inference-scheduling
@@ -347,7 +346,6 @@ jobs:
               - infra-inference-scheduling
               - gaie-inference-scheduling
               - ms-inference-scheduling
-            create_out_of_band_http_route: true
 
     env:
       INSTANCE_IP: ${{ needs.setup.outputs.instance_ip }}
@@ -398,7 +396,6 @@ jobs:
           EOF
 
       - name: Deploy HTTPRoute
-        if: ${{ matrix.deployment.create_out_of_band_http_route }}
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem "ubuntu@$INSTANCE_IP" <<'EOF'
             set -euo pipefail
